@@ -48,7 +48,7 @@
 #include <ltiIOImage.h>
 #include <ltiIOLTI.h>
 #include <ltiImage.h>
-
+#include <cstdlib>
 #include <iostream>
 #include <cstdlib>
 
@@ -123,6 +123,7 @@ int main(int argc,char* argv[]) {
 	    img.clear();
 	  }
 	} else {
+    std::cout << argv[i] << "\n";
 	  loadOk=loader.load(argv[i],img);
 	  chnl8.clear();
 	  chnl.clear();

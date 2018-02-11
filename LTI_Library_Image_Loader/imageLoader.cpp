@@ -17,6 +17,13 @@ namespace po = boost::program_options;
 #include <iostream>
 #include <algorithm>
 #include <iterator>
+
+#include <ltiViewer2D.h>
+#include <ltiIOImage.h>
+#include <ltiIOLTI.h>
+#include <ltiImage.h>
+#include <cstdlib>
+
 using namespace std;
 
 
@@ -28,16 +35,20 @@ ostream& operator<<(ostream& os, const vector<T>& v)
     return os;
 }
 
+// Create object
+lti::viewer2D::interaction action;
+lti::ipoint pos;
+
 int main(int ac, char* av[])
 {
     try {
-        int opt;
-        int portnum;
+
+        /*
+            Getting the command parameters
+        */
         po::options_description desc("Allowed options");
         desc.add_options()
             ("help", "produce help message")
-            ("include-path,I", po::value< vector<string> >(),
-                  "include path")
             ("input-file", po::value< vector<string> >(), "input file")
         ;
 
@@ -49,23 +60,59 @@ int main(int ac, char* av[])
                   options(desc).positional(p).run(), vm);
         po::notify(vm);
 
+        /*
+            Help message
+        */
         if (vm.count("help")) {
-            cout << "Usage: options_description [options]\n";
+            cout << "Usage: ./imageLoader picture1 picture2 [...]\n";
             cout << desc;
             return 0;
         }
-
-        if (vm.count("include-path"))
-        {
-            cout << "Include paths are: "
-                 << vm["include-path"].as< vector<string> >() << "\n";
-        }
-
+        /*
+            Showing the images given by the parameters
+        */
         if (vm.count("input-file"))
         {
-            cout << "Input files are: "
-                 << vm["input-file"].as< vector<string> >() << "\n";
+
+            /*
+                Executing the image showing
+            */       
+            lti::image img;
+            lti::ioImage loader; 
+            vector<string> path = vm["input-file"].as< vector<string> >();
+            // Load image
+            cout << "Info: " <<path.size() << " pictures to load" << "\n";
+            for(unsigned int i = 0; i < path.size() ;i++)
+            {
+                if(loader.load(path[i],img))
+                {
+                    // Viewer
+                    static lti::viewer2D view;
+                    lti::viewer2D::parameters vpar(view.getParameters());
+                    vpar.title = path[i]; // set the image name in the title bar
+                    view.setParameters(vpar); 
+                    view.show(img);  
+                    bool ok = false;
+                    do {
+                      view.waitInteraction(action,pos); // wait for something to happen
+                      if (action == lti::viewer2D::Closed) { // window closed?
+                      ok = true;
+                      }
+                    } while(!ok);
+                }
+                else
+                {
+                    cerr << loader.getStatusString() << std::endl;
+                    cout << "Error loading image" << "\n";
+                }
+            }
+            
         }
+        else
+        {
+            cout << "Error: there aren't pictures to load" << "\n";
+        }
+
     }
     catch(std::exception& e)
     {

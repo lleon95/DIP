@@ -1,8 +1,10 @@
 
+# Get all the libraries needed (LTI)
 LTIBASE:=/home/lleon95/ltilib-2
 LTICMD:=$(LTIBASE)/linux/lti-local-config
 LIBS:=$(shell $(LTICMD) --libs) $(EXTRALIBPATH) $(EXTRALIBS)
 
+# Defining architecture
 ifeq "$(CXX_MAJOR)" "2"
   VPATHADDON=:g++
   CPUARCH = -march=i686 -ftemplate-depth-35
@@ -19,22 +21,23 @@ else
   endif
 endif
 
+# Defining VPATH
 VPATH:=$(VPATHADDON)
 
+# Setting the compilation flags
 CXXINCLUDE:= $(patsubst %,-I%,$(subst :, ,$(VPATH)))
-
 LTICXXFLAGS:=$(shell $(LTICMD) --cxxflags)
 CXXFLAGSREL:=-c -O3 $(CPUARCH) -Wall -ansi $(LTICXXFLAGS) $(CXXINCLUDE)
 
 
 all: imageShow
  
-# $@ matches the target; $< matches the first dependent
+# Creating the executable
 imageShow: imageShow.o
 	g++ -o $@ $< $(LIBS)
-
+# Creating the object
 imageShow.o: imageShow.cpp
 	g++ -std=c++11 $(CXXFLAGSREL) $<
-     
+# Remove all the settings to recompile
 clean:
 	rm imageShow imageShow.o 
