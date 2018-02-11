@@ -35,6 +35,11 @@ ostream& operator<<(ostream& os, const vector<T>& v)
     return os;
 }
 
+// Create object
+
+lti::viewer2D::interaction action;
+lti::ipoint pos;
+
 int main(int ac, char* av[])
 {
     try {
@@ -79,17 +84,38 @@ int main(int ac, char* av[])
         {
             cout << "Input files are: "
                  << vm["input-file"].as< vector<string> >() << "\n";
+
             /*
                 Executing the image showing
-            */
-            // Create object
+            */       
             lti::image img;
-            lti::ioImage loader;                 
+            lti::ioImage loader; 
+            vector<string> path = vm["input-file"].as< vector<string> >();
             // Load image
-            loader.load("/home/lleon95/Lenna.png",img); // load an image
+            if(loader.load(path[0],img))
+            {
+                // Viewer
+                static lti::viewer2D view;
+                lti::viewer2D::parameters vpar(view.getParameters());
+                vpar.title = path[0]; // set the image name in the title bar
+                view.setParameters(vpar); 
+                view.show(img);  
+                bool ok = false;
+                do {
+                  view.waitInteraction(action,pos); // wait for something to happen
+                  if (action == lti::viewer2D::Closed) { // window closed?
+                    ok = true;
+                  
+                  }
+                } while(!ok);
+            }
+            else
+            {
+                cerr << loader.getStatusString() << std::endl;
+                cout << "Error loading image" << "\n";
+            }
             
-            lti::viewer2D viewer("What a view");
-            viewer.show(img);                         // show your favorite image
+            
             
         }
 

@@ -34,10 +34,10 @@ all: imageLoader
  
 # Creating the executable
 imageLoader: imageLoader.o
-	g++ -o $@ $< $(LIBS)
+	g++ -o $@ $< $(LIBS) -lboost_program_options
 # Creating the object
 imageLoader.o: imageLoader.cpp
-	g++ -std=c++11 $(CXXFLAGSREL) $<
+	g++ -std=c++11 $(CXXFLAGSREL) -lboost_program_options $< 
 # Remove all the settings to recompile
 clean:
 	rm imageLoader imageLoader.o 
