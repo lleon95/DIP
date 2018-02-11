@@ -12,7 +12,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
-
+#include <string>
 #include <boost/program_options.hpp>
 
 using namespace boost;
@@ -21,6 +21,7 @@ namespace po = boost::program_options;
 using namespace cv;
 using namespace std;
 
+#define FIRST_IMAGE 0
 
 // A helper function to simplify the main part.
 template<class T>
@@ -70,25 +71,24 @@ int main(int ac, char* av[])
                 Executing the image showing
             */       
             vector<string> path = vm["input-file"].as< vector<string> >();
-            // Load image
-            cout << "Info: " <<path.size() << " pictures to load" << "\n";
-            for(unsigned int i = 0; i < path.size() ;i++)
+            
+            for(int i = 0; i < path.size(); i++)
             {
+                // Load each image
                 Mat image;
                 image = imread(path[i], CV_LOAD_IMAGE_COLOR);   // Read the file
             
                 if(! image.data )                              // Check for invalid input
                 {
-                    cout <<  "Could not open or find the image" << std::endl ;
+                    cout <<  "Could not open or find the image" << "\n" ;
                     return -1;
-                }
-            
-                namedWindow( "Display window: " + i, WINDOW_AUTOSIZE );// Create a window for display.
-                imshow( "Display window "+ path[i], image );                   // Show our image inside it.
-            
+                } 
+                namedWindow( "Image Loader " + path[i], WINDOW_AUTOSIZE );  // Create a window for display.
+                imshow( "Image Loader " + path[i], image );                   // Show our image inside it.
                 
             }
-            waitKey(0);                                          // Wait for a keystroke in the window
+            waitKey(0);   // Wait for a keystroke in the window 
+            
             
         }
         else
