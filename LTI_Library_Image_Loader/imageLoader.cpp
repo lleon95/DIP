@@ -79,7 +79,17 @@ int main(int ac, char* av[])
         {
             cout << "Input files are: "
                  << vm["input-file"].as< vector<string> >() << "\n";
-
+            /*
+                Executing the image showing
+            */
+            // Create object
+            lti::image img;
+            lti::ioImage loader;                 
+            // Load image
+            loader.load("/home/lleon95/Lenna.png",img); // load an image
+            
+            lti::viewer2D viewer("What a view");
+            viewer.show(img);                         // show your favorite image
             
         }
 

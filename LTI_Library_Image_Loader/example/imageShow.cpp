@@ -48,7 +48,7 @@
 #include <ltiIOImage.h>
 #include <ltiIOLTI.h>
 #include <ltiImage.h>
-
+#include <cstdlib>
 #include <iostream>
 #include <cstdlib>
 
