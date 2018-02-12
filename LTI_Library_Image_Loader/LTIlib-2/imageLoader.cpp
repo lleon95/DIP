@@ -9,15 +9,15 @@
     http://www.boost.org/doc/libs/1_60_0/libs/program_options/example/options_description.cpp
 */
 
-#include <boost/program_options.hpp>
 
+// Libraries for Boost/Program Options
+#include <boost/program_options.hpp>
 using namespace boost;
 namespace po = boost::program_options;
-
 #include <iostream>
 #include <algorithm>
 #include <iterator>
-
+// Libaries for LTI
 #include <ltiViewer2D.h>
 #include <ltiIOImage.h>
 #include <ltiIOLTI.h>
@@ -35,7 +35,7 @@ ostream& operator<<(ostream& os, const vector<T>& v)
     return os;
 }
 
-// Create object
+// Create an interactive object
 lti::viewer2D::interaction action;
 lti::ipoint pos;
 
@@ -77,8 +77,10 @@ int main(int ac, char* av[])
             /*
                 Executing the image showing
             */       
+            // Useful vars (image obkect and loader)
             lti::image img;
             lti::ioImage loader; 
+            // Saving the parameters as a vector
             vector<string> path = vm["input-file"].as< vector<string> >();
             // Load image
             cout << "Info: " <<path.size() << " pictures to load" << "\n";
@@ -88,10 +90,13 @@ int main(int ac, char* av[])
                 {
                     // Viewer
                     static lti::viewer2D view;
+                    // Set the image name in the title bar
                     lti::viewer2D::parameters vpar(view.getParameters());
-                    vpar.title = path[i]; // set the image name in the title bar
+                    vpar.title = path[i]; 
                     view.setParameters(vpar); 
+                    // Show
                     view.show(img);  
+                    // Waiting for response
                     bool ok = false;
                     do {
                       view.waitInteraction(action,pos); // wait for something to happen
@@ -114,6 +119,7 @@ int main(int ac, char* av[])
         }
 
     }
+    // Error handling
     catch(std::exception& e)
     {
         cout << e.what() << "\n";
