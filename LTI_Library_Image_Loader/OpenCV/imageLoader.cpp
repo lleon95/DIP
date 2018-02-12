@@ -9,18 +9,21 @@
     https://docs.opencv.org/2.4/doc/tutorials/introduction/linux_gcc_cmake/linux_gcc_cmake.html
 */
 
+// Libaries
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include <string>
 #include <boost/program_options.hpp>
 
+// Namespaces
 using namespace boost;
 namespace po = boost::program_options;
 
 using namespace cv;
 using namespace std;
 
+// Defining the index of first image
 #define FIRST_IMAGE 0
 
 // A helper function to simplify the main part.
@@ -76,15 +79,18 @@ int main(int ac, char* av[])
             {
                 // Load each image
                 Mat image;
-                image = imread(path[i], CV_LOAD_IMAGE_COLOR);   // Read the file
-            
-                if(! image.data )                              // Check for invalid input
+                // Read the file
+                image = imread(path[i], CV_LOAD_IMAGE_COLOR);   
+                // Check for invalid input
+                if(! image.data )                              
                 {
                     cout <<  "Could not open or find the image" << "\n" ;
                     return -1;
                 } 
-                namedWindow( "Image Loader " + path[i], WINDOW_AUTOSIZE );  // Create a window for display.
-                imshow( "Image Loader " + path[i], image );                   // Show our image inside it.
+                // Create a window for display.
+                namedWindow( "Image Loader " + path[i], WINDOW_AUTOSIZE );  
+                // Show our image inside it.
+                imshow( "Image Loader " + path[i], image );                   
                 
             }
             waitKey(0);   // Wait for a keystroke in the window 
@@ -97,6 +103,7 @@ int main(int ac, char* av[])
         }
 
     }
+    // Error Handling
     catch(std::exception& e)
     {
         cout << e.what() << "\n";
@@ -104,29 +111,3 @@ int main(int ac, char* av[])
     }
     return 0;
 }
-
-/* using namespace std;
-
-int main( int argc, char** argv )
-{
-    if( argc != 2)
-    {
-     cout <<" Usage: display_image ImageToLoadAndDisplay" << endl;
-     return -1;
-    }
-
-    Mat image;
-    image = imread(argv[1], CV_LOAD_IMAGE_COLOR);   // Read the file
-
-    if(! image.data )                              // Check for invalid input
-    {
-        cout <<  "Could not open or find the image" << std::endl ;
-        return -1;
-    }
-
-    namedWindow( "Display window", WINDOW_AUTOSIZE );// Create a window for display.
-    imshow( "Display window", image );                   // Show our image inside it.
-
-    waitKey(0);                                          // Wait for a keystroke in the window
-    return 0;
-} */
