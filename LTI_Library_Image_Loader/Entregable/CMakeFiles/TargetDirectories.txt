@@ -1,0 +1,3 @@
+/home/lleon95/Git/DIP/LTI_Library_Image_Loader/Entregable/CMakeFiles/edit_cache.dir
+/home/lleon95/Git/DIP/LTI_Library_Image_Loader/Entregable/CMakeFiles/rebuild_cache.dir
+/home/lleon95/Git/DIP/LTI_Library_Image_Loader/Entregable/CMakeFiles/imageLoader.dir

@@ -2,11 +2,13 @@
     Institution: Tecnologico de Costa Rica
     Course: Digital Image Processing
     Author: Luis Leon Vega
-    Last Uptate: Feb/11th/2018
+    Last Uptate: Feb/12th/2018
 
     Code: This is a image loader based on OpenCV Library.
 
+    References:
     https://docs.opencv.org/2.4/doc/tutorials/introduction/linux_gcc_cmake/linux_gcc_cmake.html
+    http://www.boost.org/doc/libs/1_60_0/libs/program_options/example/options_description.cpp
 */
 
 // Libaries
@@ -82,9 +84,9 @@ int main(int ac, char* av[])
                 // Read the file
                 image = imread(path[i], CV_LOAD_IMAGE_COLOR);   
                 // Check for invalid input
-                if(! image.data )                              
+                if(!image.data)                              
                 {
-                    cout <<  "Could not open or find the image" << "\n" ;
+                    cout <<  "ERROR: Could not open or find the image" << "\n" ;
                     return -1;
                 } 
                 // Create a window for display.
@@ -93,13 +95,13 @@ int main(int ac, char* av[])
                 imshow( "Image Loader " + path[i], image );                   
                 
             }
+	    cout << "INFO: Press any key to close" << "\n";
             waitKey(0);   // Wait for a keystroke in the window 
-            
             
         }
         else
         {
-            cout << "Error: there aren't pictures to load" << "\n";
+            cout << "ERROR: there aren't pictures to load" << "\n";
         }
 
     }

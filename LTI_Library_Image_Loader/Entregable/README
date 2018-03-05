@@ -1,0 +1,33 @@
+#############################################
+		Instructions
+#############################################
+
+1. To compile, use the following commands:
+
+$ cmake .
+$ make
+
+2. Execution: loading one picture:
+
+$ ./imageLoader picture1.png 
+
+Change picture1.png to the location of the desired picture. For example:
+
+$ ./imageLoader Lenna.png
+
+Where Lenna.png is in the same directory of imageLoader
+
+3. Execution: loading more than one picture:
+
+$ ./imageLoader picture1.png picture2.png [...]
+
+Change picture1.png, picture2.png and so on, to the location of the desired pictures. For example:
+
+$ ./imageLoader Lenna.png Alligator.png
+
+Where Lenna.png and Alligator.png are in the same directory of imageLoader
+
+#############################################
+
+Thanks for reading.
+Student: Luis Leon Vega - 1st Semester - 2018
