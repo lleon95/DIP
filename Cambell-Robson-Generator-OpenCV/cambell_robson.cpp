@@ -24,10 +24,10 @@ using namespace cv;
 using namespace std;
 
 // Definitions
-#define default_cols 512
+#define default_cols 1024
 #define default_rows 512
 #define default_selected_row 450
-#define default_frequency 1
+#define default_frequency 100
 #define PI 3.14159265
 
 // Default values
@@ -41,7 +41,7 @@ float k = default_frequency; // Min desired frequency
 float Sx(int x)
 {
     float nx = PI*pow(x,2);
-    float dx = (2*rows-2);
+    float dx = (5*(rows-1));
     return sin(nx/dx);
 }
 // Signal Y
@@ -110,8 +110,8 @@ int main(int ac, char* av[])
             for(int m = 0; m < rows; m++)
             {
                 // Generating points
-                imgLinear.at<uchar>(Point(m, n)) = Cxy(m,n); // Linear image generator
-                imgLog.at<uchar>(Point(m, n)) = Clxy(m,n);   // Log image generator
+                imgLinear.at<uchar>(Point(n, m)) = Cxy(n,m); // Linear image generator
+                imgLog.at<uchar>(Point(n, m)) = Clxy(n,m);   // Log image generator
             }
         }
         // Create a window for display.
@@ -127,7 +127,7 @@ int main(int ac, char* av[])
             Modify selected_row in order to change the row
         */  
         vector<int> plot;  
-        imgLinear.row(selected_row).copyTo(plot);
+        imgLog.row(selected_row).copyTo(plot);
         Mat lineGraph = plotGraph(plot);  
         // Create a window for display.
         namedWindow( "Row Plotter", WINDOW_AUTOSIZE ); 
