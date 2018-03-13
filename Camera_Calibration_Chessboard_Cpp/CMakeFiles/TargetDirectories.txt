@@ -1,0 +1,3 @@
+/home/javier/TEC/Imagenes/git/Camera_Calibration_Chessboard_Cpp/CMakeFiles/edit_cache.dir
+/home/javier/TEC/Imagenes/git/Camera_Calibration_Chessboard_Cpp/CMakeFiles/rebuild_cache.dir
+/home/javier/TEC/Imagenes/git/Camera_Calibration_Chessboard_Cpp/CMakeFiles/getParameters.dir
