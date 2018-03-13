@@ -39,14 +39,6 @@ int operationMode= CALIBRATE_MODE;
 
 int calibrateCam(){
 
-
-  // Get parameters
-  printf("Enter number of squares along width: ");
-  scanf("%d", &numCornersHor);
-
-  printf("Enter number of squares along height: ");
-  scanf("%d", &numCornersVer);
-
   printf("Enter number of boards to analize: ");
   scanf("%d", &numBoards);
 
@@ -115,10 +107,10 @@ int calibrateCam(){
   calibrateCamera(object_points, image_points, image.size(), intrinsics, distortion, rvecs, tvecs);
 }
 
-void drawAxis(Mat* image, vector<Point2f> imagePoints, vector<Point2d> imageFramePoints){
-  line(*image, imagePoints[0], imageFramePoints[0],RED_COLOR, 5 );
-  line(*image, imagePoints[0], imageFramePoints[1], GREEN_COLOR , 5 );
-  line(*image, imagePoints[0], imageFramePoints[2], BLUE_COLOR, 5 );
+void drawAxis(Mat* image,  vector<Point2d> imageFramePoints){
+  line(*image, imageFramePoints[0], imageFramePoints[1], RED_COLOR, 5 );
+  line(*image, imageFramePoints[0], imageFramePoints[2], GREEN_COLOR , 5 );
+  line(*image, imageFramePoints[0], imageFramePoints[3], BLUE_COLOR, 5 );
 }
 
 int identifyAxis(){
@@ -158,7 +150,7 @@ int identifyAxis(){
     cvtColor(image,gray_image,COLOR_BGR2GRAY);
 
     board_sz = Size(numCornersHor, numCornersVer);
-    
+
      // Detect board corners
      bool found = findChessboardCorners(gray_image, board_sz, imagePoints, CALIB_CB_FAST_CHECK);
 
@@ -176,7 +168,7 @@ int identifyAxis(){
 
 
        // Draw axis
-       drawAxis(&image, imagePoints, imageFramePoints);
+       drawAxis(&image, imageFramePoints);
 
      }
 
@@ -197,7 +189,7 @@ void saveData(){
   try{
     FileStorage fs(FILENAME, FileStorage::WRITE);
     fs<< "Intrinsics"<<intrinsics;
-    fs<< "Distorsion" <<distortion;
+    fs<< "Distortion" <<distortion;
     fs.release();
   }
   catch(std::exception& e)
@@ -218,7 +210,7 @@ int loadData(){
           }
 
     fs["Intrinsics"]>>intrinsics;
-    //fs["Distorsion"]>>distortion;
+    fs["Distortion"]>>distortion;
     fs.release();
   }
   catch(std::exception& e)
@@ -276,7 +268,7 @@ int main(int ac, char* av[])
     References:
     http://aishack.in/tutorials/calibrating-undistorting-opencv-oh-yeah/
     http://www.swarthmore.edu/NatSci/mzucker1/opencv-2.4.10-docs/doc/tutorials/calib3d/camera_calibration_square_chess/camera_calibration_square_chess.html
-    http://www.swarthmore.edu/NatSci/mzucker1/opencv-2.4.10-docs/doc/tutorials/calib3d/camera_calibration/camera_calibration.html
+      http://www.swarthmore.edu/NatSci/mzucker1/opencv-2.4.10-docs/doc/tutorials/calib3d/camera_calibration/camera_calibration.html
     https://github.com/foxymop/3DPoseEstimation/tree/master/src
     https://docs.opencv.org/3.3.0/d7/d53/tutorial_py_pose.html
 */
