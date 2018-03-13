@@ -67,7 +67,7 @@ int main()
         if(key==27)
             return 0;
         // Space
-        if(found!=0)
+        if(key== ' ' &&found!=0)
         {
             image_points.push_back(corners);
             object_points.push_back(obj);
@@ -102,7 +102,11 @@ int main()
 
         imshow("win1", image);
         imshow("win2", imageUndistorted);
-        waitKey(1);
+        // Catch key
+        int key = waitKey(1);
+        // Escape
+        if(key==27)
+            return 0;
     }
     capture.release();
     
