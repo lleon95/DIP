@@ -4,9 +4,6 @@
 
 using namespace cv;
 
-
-
-
 int main()
 {
     int numBoards = 0;
@@ -113,9 +110,9 @@ int main()
     }
     
 	// Generate Axis
-	framePoints.push_back( Point3f( 3.0, 0.0, 0.0 ) );
-	framePoints.push_back( Point3f( 0.0, 3.0, 0.0 ) );
-	framePoints.push_back( Point3f( 0.0, 0.0, -3.0 ) );
+	framePoints.push_back( Point3d( 3, 0, 0 ) );
+	framePoints.push_back( Point3d( 0, 3, 0 ) );
+	framePoints.push_back( Point3d( 0, 0, -3 ) );
 
 
 	// Routine for capturing pictures
@@ -170,5 +167,7 @@ int main()
     http://aishack.in/tutorials/calibrating-undistorting-opencv-oh-yeah/
     http://www.swarthmore.edu/NatSci/mzucker1/opencv-2.4.10-docs/doc/tutorials/calib3d/camera_calibration_square_chess/camera_calibration_square_chess.html
     http://www.swarthmore.edu/NatSci/mzucker1/opencv-2.4.10-docs/doc/tutorials/calib3d/camera_calibration/camera_calibration.html
+    https://github.com/foxymop/3DPoseEstimation/tree/master/src
+    https://docs.opencv.org/3.3.0/d7/d53/tutorial_py_pose.html
 */
 
