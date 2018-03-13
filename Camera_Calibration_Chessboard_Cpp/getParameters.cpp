@@ -144,16 +144,20 @@ int main()
 			 projectPoints(framePoints, rvec, tvec, intrinsics, distortion, imageFramePoints);
 			 
 			 // Draw axis
-			 line(gray_image, imagePoints[0], imageFramePoints[0], CV_RGB(255,0,0), 5 );
-			 line(gray_image, imagePoints[0], imageFramePoints[1], CV_RGB(0,255,0), 5 );
-			 line(gray_image, imagePoints[0], imageFramePoints[2], CV_RGB(0,0,255), 5 );
+			 line(image, imagePoints[0], imageFramePoints[0], CV_RGB(255,0,0), 5 );
+			 line(image, imagePoints[0], imageFramePoints[1], CV_RGB(0,255,0), 5 );
+			 line(image, imagePoints[0], imageFramePoints[2], CV_RGB(0,0,255), 5 );
 			 
 		 }
 
 		 // Show picture
-		 imshow("Result", gray_image);
+		 imshow("Result", image);
 
-		 waitKey(1);
+		 // Catch key
+         int key = waitKey(1);
+         // Escape
+         if(key==27)
+             return 0;
     }
     
     return 0;
