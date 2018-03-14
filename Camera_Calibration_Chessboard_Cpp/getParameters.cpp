@@ -46,7 +46,7 @@ int calibrateCam(){
   int numSquares = numCornersHor * numCornersVer;
   board_sz = Size(numCornersHor, numCornersVer);
 
-  intrinsics = Mat(3, 3, CV_32FC1);
+  intrinsics;
    // Space reference
   vector<vector <Point3f> > object_points;
    // Image reference
@@ -98,79 +98,61 @@ int calibrateCam(){
               break;
       }
   }
+  //First camera matrix aproximation based on objectPoints
+  intrinsics = initCameraMatrix2D(object_points, image_points, board_sz);
+
+
   vector<Mat> rvecs;
   vector<Mat> tvecs;
-  intrinsics.ptr<float>(0)[0] = 1;
-  intrinsics.ptr<float>(1)[1] = 1;
 
   // Calibrate camera
   calibrateCamera(object_points, image_points, image.size(), intrinsics, distortion, rvecs, tvecs);
 }
 
 void drawAxis(Mat* image,  vector<Point2d> imageFramePoints){
-  line(*image, imageFramePoints[0], imageFramePoints[1], RED_COLOR, 5 );
-  line(*image, imageFramePoints[0], imageFramePoints[2], GREEN_COLOR , 5 );
+  line(*image, imageFramePoints[0], imageFramePoints[1], GREEN_COLOR, 5 );
+  line(*image, imageFramePoints[0], imageFramePoints[2], RED_COLOR , 5 );
   line(*image, imageFramePoints[0], imageFramePoints[3], BLUE_COLOR, 5 );
 }
 
 int identifyAxis(){
-    // Set up matrices for transformation vectors
-  Mat rvec = Mat(Size(3,1), CV_64F);
-  Mat tvec = Mat(Size(3,1), CV_64F);
-
-  //setup vectors to hold the chessboard corners in the chessboard coordinate system and in the image
-  vector<Point2d> imageFramePoints, imageOrigin;
-  vector<Point3d> boardPoints, framePoints;
-  vector<Point2f> imagePoints;
-
-
-  // Vectors for the points
-  for (int i=0; i<numCornersHor; i++)
-  {
-    for (int j=0; j<numCornersVer; j++)
-    {
-      boardPoints.push_back( Point3d( double(i), double(j), 0.0) );
-    }
-  }
-
-  // Generate Axis
-  framePoints.push_back( Point3d( 3, 0, 0 ) );
-  framePoints.push_back( Point3d( 0, 3, 0 ) );
-  framePoints.push_back( Point3d( 0, 0, -3 ) );
-
-
-  // Routine for capturing pictures
-    bool doneYet = false;
-  while(!doneYet)
-  {
-     // Capture a picture
-     capture.read(image);
-
-     // Make gray
-    cvtColor(image,gray_image,COLOR_BGR2GRAY);
-
     board_sz = Size(numCornersHor, numCornersVer);
 
-     // Detect board corners
-     bool found = findChessboardCorners(gray_image, board_sz, imagePoints, CALIB_CB_FAST_CHECK);
+    // Set up matrices for transformation vectors
+    Mat rvec,tvec;
+    //setup vectors to hold the chessboard corners in the chessboard coordinate system and in the image
+    vector<Point2d> imageFramePoints, imageOrigin;
+    vector<Point3d> boardPoints, framePoints;
+    vector<Point2f> imagePoints;
 
-     // Find camera orientation
-     if ( found )
-     {
-      // Modify corners
-      cornerSubPix(gray_image, imagePoints, Size(11, 11), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.001));
+    //Calculates the position in space
+    for( int i = 0; i < board_sz.height; ++i )
+            for( int j = 0; j < board_sz.width; ++j )
+                boardPoints.push_back(Point3f(float(j), float( i), 0));
 
-      // Find extrinsic parameters
-       solvePnP( Mat(boardPoints), Mat(imagePoints), intrinsics, distortion, rvec, tvec, false );
-
-       // Look for the reference
-       projectPoints(framePoints, rvec, tvec, intrinsics, distortion, imageFramePoints);
+    framePoints.push_back(Point3f(0, 0, 0));               //Origin
+    framePoints.push_back(Point3f(3, 0, 0));    //X axis
+    framePoints.push_back(Point3f(0, 3, 0));    //Y axis
+    framePoints.push_back(Point3f(0, 0, -3));   //Z axis
 
 
-       // Draw axis
-       drawAxis(&image, imageFramePoints);
 
-     }
+
+    // Routine for capturing pictures
+    bool doneYet = false;
+    while(!doneYet){
+        capture.read(image);
+
+        // Detect board corners
+        bool found = findChessboardCorners(image, board_sz, imagePoints,
+                CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
+        // Find camera orientation
+        if(found){
+                solvePnP(boardPoints, imagePoints, intrinsics, distortion, rvec, tvec);
+                projectPoints(framePoints, rvec, tvec, intrinsics, distortion, imageFramePoints);
+
+                drawAxis(&image, imageFramePoints);
+        }
 
      // Show picture
      imshow("Result", image);
@@ -181,6 +163,7 @@ int identifyAxis(){
              return 0;
     }
     return 0;
+
 }
 
 
@@ -219,8 +202,7 @@ int loadData(){
   }
 
 }
-int main(int ac, char* av[])
-{
+int main(int ac, char* av[]){
   try{
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -241,9 +223,9 @@ int main(int ac, char* av[])
     if (vm.count("mode")) {}
     if (vm.count("hor")) {}
     if (vm.count("ver")) {}
+
     numCornersHor=vm["hor"].as<int>();
     numCornersVer=vm["ver"].as<int>();
-
     operationMode= vm["mode"].as<int>();
   }
   catch(std::exception& e)
