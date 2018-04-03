@@ -128,4 +128,9 @@ int main(int ac, char* av[]){
 /*
     Final Table Scheme:
         ImageSize   KernelSize  AvgTime
+
+    For the point 3:
+        Substract one img (time filtered) to other (frequency filtered)
+        Use frobenius (maximize)
+        Use Abs
 */
