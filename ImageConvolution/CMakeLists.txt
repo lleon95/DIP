@@ -1,4 +1,4 @@
-
+set(CMAKE_CXX_STANDARD 11)
 set( OpenCV_FOUND 1 )
 cmake_minimum_required(VERSION 2.4.9)
 project( tarea4 )
