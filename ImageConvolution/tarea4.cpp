@@ -215,7 +215,7 @@ int main(int ac, char* av[]){
                         timeSum += elapsedTime;
                     }
                     // Average
-                    writeRowInFile(results, "GaussSpace", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    writeRowInFile(results, "Gauss_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
                     // ##################
                     // SeparableLinear
                     // ##################
@@ -229,7 +229,7 @@ int main(int ac, char* av[]){
                         timeSum += elapsedTime;
                     }
                     // Average
-                    writeRowInFile(results, "SepLinearSpace", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    writeRowInFile(results, "SepLinear_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
                     // ##################
                     // Non-SeparableLinear
                     // ##################
@@ -243,7 +243,7 @@ int main(int ac, char* av[]){
                         timeSum += elapsedTime;
                     }
                     // Average
-                    writeRowInFile(results, "NonSepLinearSpace", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    writeRowInFile(results, "NonSepLinear_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
                 }
 
 
@@ -319,7 +319,7 @@ int main(int ac, char* av[]){
 /*
 
     Last debugging:
-    
+
     //ApplyNoSeparableLinearFilter(src, dst, 9);
     //ApplySeparableLinearFilter(src, dst, 9);
     //ApplyGaussianFilter(src, dst, 9);
