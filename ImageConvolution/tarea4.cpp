@@ -297,7 +297,7 @@ int main(int ac, char* av[]){
         NonSepDFT   500x500     11x11       0.2230
 
     For the point 3:
-        Substract one img (time filtered) to other (frequency filtered)
+        Substract one img (time filtered) with the other one (frequency filtered)
         Use frobenius (maximize)
         Use Abs
 */
