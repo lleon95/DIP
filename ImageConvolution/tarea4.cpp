@@ -11,7 +11,8 @@
 // Define 10 runs for time averaging
 #define nRuns 10
 // Define kernel sizes
-const std::vector<int> kernelSizes = {3,9,27,49,81,243,399,511,729,1023};
+//const std::vector<int> kernelSizes = {3,9,27,49,81,243,399,511,729,1023};
+const std::vector<int> kernelSizes = {3,9,27,49,81};
 
 // Boost program options
 namespace po = boost::program_options;
@@ -201,9 +202,12 @@ int main(int ac, char* av[]){
                 // Run each kernel
                 for(int kSize : kernelSizes)
                 {
+                    double timeSum = 0;
+                    // ##################
+                    // Gaussian
+                    // ##################
                     std::cout << "Filtering with Gaussian in Space - ImageSize:" << srcSize.width << "x" << srcSize.height << " KernelSize:"<< kSize << std::endl;
                     // Run each kernel n times for averaging
-                    double timeSum = 0;
                     for(int i = 0; i < nRuns; i++)
                     {
                         double elapsedTime = 0;
@@ -212,6 +216,34 @@ int main(int ac, char* av[]){
                     }
                     // Average
                     writeRowInFile(results, "GaussSpace", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    // ##################
+                    // SeparableLinear
+                    // ##################
+                    std::cout << "Filtering with Separable Linear Filter in Space - ImageSize:" << srcSize.width << "x" << srcSize.height << " KernelSize:"<< kSize << std::endl;
+                    // Run each kernel n times for averaging
+                    timeSum = 0;
+                    for(int i = 0; i < nRuns; i++)
+                    {
+                        double elapsedTime = 0;
+                        ApplySeparableLinearFilter(src, dst, kSize, elapsedTime);
+                        timeSum += elapsedTime;
+                    }
+                    // Average
+                    writeRowInFile(results, "SepLinearSpace", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    // ##################
+                    // Non-SeparableLinear
+                    // ##################
+                    std::cout << "Filtering with Non-Separable Linear Filter in Space - ImageSize:" << srcSize.width << "x" << srcSize.height << " KernelSize:"<< kSize << std::endl;
+                    // Run each kernel n times for averaging
+                    timeSum = 0;
+                    for(int i = 0; i < nRuns; i++)
+                    {
+                        double elapsedTime = 0;
+                        ApplyNoSeparableLinearFilter(src, dst, kSize, elapsedTime);
+                        timeSum += elapsedTime;
+                    }
+                    // Average
+                    writeRowInFile(results, "NonSepLinearSpace", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
                 }
 
 
@@ -221,7 +253,7 @@ int main(int ac, char* av[]){
                 // See below 
                 
             }
-            cv::waitKey(0);   // Wait for a keystroke in the window 
+            //cv::waitKey(0);   // Wait for a keystroke in the window 
             std::cout << "Execution Finished..." << std::endl;
             closeFile(results);
             
@@ -285,6 +317,9 @@ int main(int ac, char* av[]){
 */
 
 /*
+
+    Last debugging:
+    
     //ApplyNoSeparableLinearFilter(src, dst, 9);
     //ApplySeparableLinearFilter(src, dst, 9);
     //ApplyGaussianFilter(src, dst, 9);
