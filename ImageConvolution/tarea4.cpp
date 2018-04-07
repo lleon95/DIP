@@ -32,7 +32,7 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 // ########################################################################################
 
 // ------------------------------
-// Get time
+// Get time and apply filter
 // ------------------------------
 double ApplySpaceFilter(const cv::Mat& src, cv::Mat& dst, cv::Ptr<cv::FilterEngine> filter2D)
 {
