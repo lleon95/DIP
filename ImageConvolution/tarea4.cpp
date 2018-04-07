@@ -55,7 +55,7 @@ int main(int ac, char* av[]){
             std::cout << desc;
             return 0;
         }
-        /*
+        /*https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#Ptr%3CFilterEngine%3E%20createLinearFilter(int%20srcType,%20int%20dstType,%20InputArray%20kernel,%20Point%20_anchor,%20double%20delta,%20int%20rowBorderType,%20int%20columnBorderType,%20const%20Scalar&%20borderValue)
             Showing the images given by the parameters
         */
         if (vm.count("input-file"))
@@ -71,7 +71,9 @@ int main(int ac, char* av[]){
                 // Loading each image
                 // ------------------------------
                 // Read the file
-                src = cv::imread(path[i], CV_LOAD_IMAGE_COLOR);   
+                src = cv::imread(path[i], CV_LOAD_IMAGE_COLOR);
+                cvtColor(src, src, CV_BGR2GRAY);  
+                dst = src.clone();
                 // Check for invalid input
                 if(! src.data )                              
                 {
@@ -86,14 +88,15 @@ int main(int ac, char* av[]){
                 // ------------------------------
                 // Applying the filter
                 // ------------------------------
-                cv::Ptr<cv::FilterEngine> filter2D = cv::createLinearFilter(src.type(), src.type(), kernel);
-                cv::filter2D(src, dst, -1, kernel);
+                cv::Ptr<cv::FilterEngine> filter2D = cv::createLinearFilter(src.type(), dst.type(), kernel);
+                filter2D->apply(src, dst);
+                //cv::filter2D(src, dst, -1, kernel);
 
                 // Test
                 // Create a window for display.
                 cv::namedWindow( "Image Loader ", cv::WINDOW_AUTOSIZE );  
                 // Show our image inside it.
-                cv::imshow( "Image Loader ", dst );    
+                cv::imshow( "Image Loader ", dst);    
                 
             }
             cv::waitKey(0);   // Wait for a keystroke in the window 
