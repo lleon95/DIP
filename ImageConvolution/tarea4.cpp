@@ -5,6 +5,8 @@
 #include <boost/program_options.hpp>
 #include <numeric>
 #include <chrono>
+#include <fstream>
+#include <string>
 
 // Define 10 runs for time averaging
 #define n 10
@@ -84,6 +86,28 @@ void ApplyGaussianFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size)
 }
 
 // ########################################################################################
+// File management and tabulation
+// ########################################################################################
+void createNewFile(std::ofstream& newFile, std::string filename)
+{
+    // Create and open a new file
+    newFile.open(filename);
+    // Create header
+    newFile << "Type\tImageSize\tKernelSize\tAvgTime\n";
+} 
+
+void closeFile(std::ofstream& file)
+{
+    file.close();
+}
+
+void writeRowInFile(std::ofstream& file, std::string registerType ,cv::Size ImageSize, cv::Size KernelSize, double AvgTime)
+{
+    file << registerType << "\t" << ImageSize.width << "x" << ImageSize.height << "\t" <<  KernelSize.width << "x" << KernelSize.height << "\t" << AvgTime << std::endl;
+}
+
+
+// ########################################################################################
 // Main Routine
 // ########################################################################################
 
@@ -154,6 +178,11 @@ int main(int ac, char* av[]){
                 //ApplySeparableLinearFilter(src, dst, 9);
                 ApplyGaussianFilter(src, dst, 9);
 
+                std::ofstream results;
+                createNewFile(results, "results.txt");
+                writeRowInFile(results, "NonSepTest", src.size(), cv::Size(3,3), 0.0222);
+                closeFile(results);
+
                 // Test
                 // Create a window for display.
                 cv::namedWindow( "Original", cv::WINDOW_AUTOSIZE );  
@@ -197,10 +226,28 @@ int main(int ac, char* av[]){
 
 /*
     Final Table Scheme:
-        ImageSize   KernelSize  AvgTime
+        Type        ImageSize   KernelSize  AvgTime
+    Ex:
+        NonSepSpace 200x200     3x3         0.00003
+        SepSpace    300x300     9x9         0.00050
+        NonSepDFT   500x500     11x11       0.2230
 
     For the point 3:
         Substract one img (time filtered) to other (frequency filtered)
         Use frobenius (maximize)
         Use Abs
+*/
+
+/*
+    How to use the printing function
+
+    // Create the file once
+    std::ofstream results;
+    createNewFile(results, "results.txt");
+
+    // To write the file, use:            
+    writeRowInFile(results, "NonSepTest", src.size(), cv::Size(3,3), 0.0222);
+    
+    // At the end, close the file
+    closeFile(results);
 */

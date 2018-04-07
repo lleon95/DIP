@@ -1,0 +1,2 @@
+Type	ImageSize	KernelSize	AvgTime
+NonSepTest	512x512	3x3	0.0222
