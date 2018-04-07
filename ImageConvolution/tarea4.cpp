@@ -26,6 +26,10 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 // Space - Filters
 // ########################################################################################
 
+// ------------------------------
+// Linear filters
+// ------------------------------
+
 // No separable filter
 void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size)
 {
@@ -53,6 +57,30 @@ void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_siz
     // ------------------------------
     cv::Ptr<cv::FilterEngine> filter2D = cv::createSeparableLinearFilter(src.type(), dst.type(), rowkernel, colkernel);
     filter2D->apply(src, dst);
+}
+
+// ------------------------------
+// Gaussian filter
+// ------------------------------
+// Sigma computation
+double sigmaCompute(int kernel_size)
+{
+    return (kernel_size + 2)/6;
+}
+
+// Gaussian filter
+void ApplyGaussianFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size)
+{
+    // ------------------------------
+    // Applying the filter
+    // ------------------------------
+    // Compute sigma
+    double sigma = sigmaCompute(kernel_size);
+    // Create an applicable filter
+    cv::Ptr<cv::FilterEngine> filter2D = cv::createGaussianFilter(src.type(), cv::Size(kernel_size,kernel_size), sigma, sigma);
+    // Apply
+    filter2D->apply(src, dst);
+    
 }
 
 // ########################################################################################
@@ -123,13 +151,16 @@ int main(int ac, char* av[]){
                 // Debugging
                 // ------------------------------
                 //ApplyNoSeparableLinearFilter(src, dst, 9);
-                ApplySeparableLinearFilter(src, dst, 9);
+                //ApplySeparableLinearFilter(src, dst, 9);
+                ApplyGaussianFilter(src, dst, 9);
 
                 // Test
                 // Create a window for display.
-                cv::namedWindow( "Image Loader ", cv::WINDOW_AUTOSIZE );  
+                cv::namedWindow( "Original", cv::WINDOW_AUTOSIZE );  
+                cv::namedWindow( "Filtrada", cv::WINDOW_AUTOSIZE );  
                 // Show our image inside it.
-                cv::imshow( "Image Loader ", dst);    
+                cv::imshow( "Original", src);    
+                cv::imshow( "Filtrada", dst);    
                 
             }
             cv::waitKey(0);   // Wait for a keystroke in the window 
@@ -158,6 +189,9 @@ int main(int ac, char* av[]){
         http://en.cppreference.com/w/cpp/chrono/high_resolution_clock/now
         https://docs.opencv.org/2.4/doc/tutorials/imgproc/imgtrans/filter_2d/filter_2d.html
         https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#Ptr%3CFilterEngine%3E%20createLinearFilter(int%20srcType,%20int%20dstType,%20InputArray%20kernel,%20Point%20_anchor,%20double%20delta,%20int%20rowBorderType,%20int%20columnBorderType,%20const%20Scalar&%20borderValue)
+        https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#FilterEngine
+        https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#Ptr%3CFilterEngine%3E%20createSeparableLinearFilter(int%20srcType,%20int%20dstType,%20InputArray%20rowKernel,%20InputArray%20columnKernel,%20Point%20anchor,%20double%20delta,%20int%20rowBorderType,%20int%20columnBorderType,%20const%20Scalar&%20borderValue)
+        https://docs.opencv.org/2.4/modules/core/doc/basic_structures.html
 */
 
 
