@@ -54,13 +54,9 @@ double ApplySpaceFilter(const cv::Mat& src, cv::Mat& dst, cv::Ptr<cv::FilterEngi
 // No separable filter
 void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size, double& elapsedTime)
 {
-    // ------------------------------
     // Creating a kernel
-    // ------------------------------
     cv::Mat kernel = cv::Mat::ones( kernel_size, kernel_size, CV_32F )/ (float)(kernel_size*kernel_size);
-    // ------------------------------
     // Applying the filter
-    // ------------------------------
     cv::Ptr<cv::FilterEngine> filter2D = cv::createLinearFilter(src.type(), dst.type(), kernel);
     elapsedTime = ApplySpaceFilter(src,dst,filter2D);
 }
@@ -68,14 +64,10 @@ void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_s
 // Separable filter
 void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size, double& elapsedTime)
 {
-    // ------------------------------
     // Creating kernels
-    // ------------------------------
     cv::Mat rowkernel = cv::Mat::ones( kernel_size, 1, CV_32F )/ (float)(kernel_size);
     cv::Mat colkernel = cv::Mat::ones( 1, kernel_size, CV_32F )/ (float)(kernel_size);
-    // ------------------------------
     // Applying the filter
-    // ------------------------------
     cv::Ptr<cv::FilterEngine> filter2D = cv::createSeparableLinearFilter(src.type(), dst.type(), rowkernel, colkernel);
     elapsedTime = ApplySpaceFilter(src,dst,filter2D);
 }
@@ -92,9 +84,6 @@ double sigmaCompute(int kernel_size)
 // Gaussian filter
 void ApplyGaussianFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size, double& elapsedTime)
 {
-    // ------------------------------
-    // Applying the filter
-    // ------------------------------
     // Compute sigma
     double sigma = sigmaCompute(kernel_size);
     // Create an applicable filter
@@ -164,12 +153,14 @@ int main(int ac, char* av[]){
             std::cout << desc;
             return 0;
         }
+
+        /*
+            Loading images from args
+        */
        
         if (vm.count("input-file"))
         {
-            /*
-                EXECUTING ANALYSIS FOR SPACE FILTERS
-            */
+           
             // Image path vector       
             std::vector<std::string> path = vm["input-file"].as< std::vector<std::string> >();
             // Open new File for log
@@ -195,9 +186,8 @@ int main(int ac, char* av[]){
                 } 
                 // Get size image
                 cv::Size srcSize = src.size();
-
                 // ------------------------------
-                // Run filtering
+                // Run SPACE filtering 
                 // ------------------------------
                 // Run each kernel
                 for(int kSize : kernelSizes)
