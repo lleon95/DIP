@@ -21,11 +21,49 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 }
 
 
+
+// ########################################################################################
+// Space - Filters
+// ########################################################################################
+
+// No separable filter
+void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size)
+{
+    // ------------------------------
+    // Creating a kernel
+    // ------------------------------
+    cv::Mat kernel = cv::Mat::ones( kernel_size, kernel_size, CV_32F )/ (float)(kernel_size*kernel_size);
+    // ------------------------------
+    // Applying the filter
+    // ------------------------------
+    cv::Ptr<cv::FilterEngine> filter2D = cv::createLinearFilter(src.type(), dst.type(), kernel);
+    filter2D->apply(src, dst);
+}
+
+// Separable filter
+void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size)
+{
+    // ------------------------------
+    // Creating kernels
+    // ------------------------------
+    cv::Mat rowkernel = cv::Mat::ones( kernel_size, 1, CV_32F )/ (float)(kernel_size);
+    cv::Mat colkernel = cv::Mat::ones( 1, kernel_size, CV_32F )/ (float)(kernel_size);
+    // ------------------------------
+    // Applying the filter
+    // ------------------------------
+    cv::Ptr<cv::FilterEngine> filter2D = cv::createSeparableLinearFilter(src.type(), dst.type(), rowkernel, colkernel);
+    filter2D->apply(src, dst);
+}
+
+// ########################################################################################
+// Main Routine
+// ########################################################################################
+
+
 int main(int ac, char* av[]){
     
     // Vars needed
     cv::Mat src, dst;
-    cv::Mat kernel;
     int kernel_size;
 
     try {
@@ -80,17 +118,12 @@ int main(int ac, char* av[]){
                     std::cout <<  "Could not open or find the image" << "\n" ;
                     return -1;
                 } 
+                
                 // ------------------------------
-                // Creating a kernel
+                // Debugging
                 // ------------------------------
-                kernel_size = 10;
-                kernel = cv::Mat::ones( kernel_size, kernel_size, CV_32F )/ (float)(kernel_size*kernel_size);
-                // ------------------------------
-                // Applying the filter
-                // ------------------------------
-                cv::Ptr<cv::FilterEngine> filter2D = cv::createLinearFilter(src.type(), dst.type(), kernel);
-                filter2D->apply(src, dst);
-                //cv::filter2D(src, dst, -1, kernel);
+                //ApplyNoSeparableLinearFilter(src, dst, 9);
+                ApplySeparableLinearFilter(src, dst, 9);
 
                 // Test
                 // Create a window for display.
