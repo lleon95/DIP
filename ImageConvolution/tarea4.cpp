@@ -9,7 +9,9 @@
 #include <string>
 
 // Define 10 runs for time averaging
-#define n 10
+#define nRuns 10
+// Define kernel sizes
+const std::vector<int> kernelSizes = {3,9,27,49,81,243,399,511,729,1023};
 
 // Boost program options
 namespace po = boost::program_options;
@@ -29,11 +31,27 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 // ########################################################################################
 
 // ------------------------------
+// Get time
+// ------------------------------
+double ApplySpaceFilter(const cv::Mat& src, cv::Mat& dst, cv::Ptr<cv::FilterEngine> filter2D)
+{
+    // Start counter
+    auto start = std::chrono::high_resolution_clock::now();
+    // Apply Filter
+    filter2D->apply(src, dst);
+    // Stop and record counter
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> diff = end-start;
+    // Return time difference
+    return diff.count();
+}
+
+// ------------------------------
 // Linear filters
 // ------------------------------
 
 // No separable filter
-void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size)
+void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size, double& elapsedTime)
 {
     // ------------------------------
     // Creating a kernel
@@ -43,11 +61,11 @@ void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_s
     // Applying the filter
     // ------------------------------
     cv::Ptr<cv::FilterEngine> filter2D = cv::createLinearFilter(src.type(), dst.type(), kernel);
-    filter2D->apply(src, dst);
+    elapsedTime = ApplySpaceFilter(src,dst,filter2D);
 }
 
 // Separable filter
-void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size)
+void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size, double& elapsedTime)
 {
     // ------------------------------
     // Creating kernels
@@ -58,7 +76,7 @@ void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_siz
     // Applying the filter
     // ------------------------------
     cv::Ptr<cv::FilterEngine> filter2D = cv::createSeparableLinearFilter(src.type(), dst.type(), rowkernel, colkernel);
-    filter2D->apply(src, dst);
+    elapsedTime = ApplySpaceFilter(src,dst,filter2D);
 }
 
 // ------------------------------
@@ -71,7 +89,7 @@ double sigmaCompute(int kernel_size)
 }
 
 // Gaussian filter
-void ApplyGaussianFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size)
+void ApplyGaussianFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size, double& elapsedTime)
 {
     // ------------------------------
     // Applying the filter
@@ -81,7 +99,7 @@ void ApplyGaussianFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size)
     // Create an applicable filter
     cv::Ptr<cv::FilterEngine> filter2D = cv::createGaussianFilter(src.type(), cv::Size(kernel_size,kernel_size), sigma, sigma);
     // Apply
-    filter2D->apply(src, dst);
+    elapsedTime = ApplySpaceFilter(src,dst,filter2D);
     
 }
 
@@ -145,16 +163,19 @@ int main(int ac, char* av[]){
             std::cout << desc;
             return 0;
         }
-        /*https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#Ptr%3CFilterEngine%3E%20createLinearFilter(int%20srcType,%20int%20dstType,%20InputArray%20kernel,%20Point%20_anchor,%20double%20delta,%20int%20rowBorderType,%20int%20columnBorderType,%20const%20Scalar&%20borderValue)
-            Showing the images given by the parameters
-        */
+       
         if (vm.count("input-file"))
         {
             /*
-                Executing the image showing
-            */       
+                EXECUTING ANALYSIS FOR SPACE FILTERS
+            */
+            // Image path vector       
             std::vector<std::string> path = vm["input-file"].as< std::vector<std::string> >();
-            
+            // Open new File for log
+            std::ofstream results;
+            createNewFile(results, "results.txt");
+            // Explore all images
+            std::cout << "Starting..." << std::endl;
             for(int i = 0; i < path.size(); i++)
             {
                 // ------------------------------
@@ -162,6 +183,7 @@ int main(int ac, char* av[]){
                 // ------------------------------
                 // Read the file
                 src = cv::imread(path[i], CV_LOAD_IMAGE_COLOR);
+                std::cout << "Image: " << path[i] << " loaded..." << std::endl;
                 cvtColor(src, src, CV_BGR2GRAY);  
                 dst = src.clone();
                 // Check for invalid input
@@ -170,30 +192,38 @@ int main(int ac, char* av[]){
                     std::cout <<  "Could not open or find the image" << "\n" ;
                     return -1;
                 } 
-                
+                // Get size image
+                cv::Size srcSize = src.size();
+
+                // ------------------------------
+                // Run filtering
+                // ------------------------------
+                // Run each kernel
+                for(int kSize : kernelSizes)
+                {
+                    std::cout << "Filtering with Gaussian in Space - ImageSize:" << srcSize.width << "x" << srcSize.height << " KernelSize:"<< kSize << std::endl;
+                    // Run each kernel n times for averaging
+                    double timeSum = 0;
+                    for(int i = 0; i < nRuns; i++)
+                    {
+                        double elapsedTime = 0;
+                        ApplyGaussianFilter(src, dst, kSize, elapsedTime);
+                        timeSum += elapsedTime;
+                    }
+                    // Average
+                    writeRowInFile(results, "GaussSpace", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                }
+
+
                 // ------------------------------
                 // Debugging
                 // ------------------------------
-                //ApplyNoSeparableLinearFilter(src, dst, 9);
-                //ApplySeparableLinearFilter(src, dst, 9);
-                ApplyGaussianFilter(src, dst, 9);
-
-                std::ofstream results;
-                createNewFile(results, "results.txt");
-                writeRowInFile(results, "NonSepTest", src.size(), cv::Size(3,3), 0.0222);
-                closeFile(results);
-
-                // Test
-                // Create a window for display.
-                cv::namedWindow( "Original", cv::WINDOW_AUTOSIZE );  
-                cv::namedWindow( "Filtrada", cv::WINDOW_AUTOSIZE );  
-                // Show our image inside it.
-                cv::imshow( "Original", src);    
-                cv::imshow( "Filtrada", dst);    
+                // See below 
                 
             }
             cv::waitKey(0);   // Wait for a keystroke in the window 
-            
+            std::cout << "Execution Finished..." << std::endl;
+            closeFile(results);
             
         }
         else
@@ -221,6 +251,8 @@ int main(int ac, char* av[]){
         https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#FilterEngine
         https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#Ptr%3CFilterEngine%3E%20createSeparableLinearFilter(int%20srcType,%20int%20dstType,%20InputArray%20rowKernel,%20InputArray%20columnKernel,%20Point%20anchor,%20double%20delta,%20int%20rowBorderType,%20int%20columnBorderType,%20const%20Scalar&%20borderValue)
         https://docs.opencv.org/2.4/modules/core/doc/basic_structures.html
+        https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#Ptr%3CFilterEngine%3E%20createLinearFilter(int%20srcType,%20int%20dstType,%20InputArray%20kernel,%20Point%20_anchor,%20double%20delta,%20int%20rowBorderType,%20int%20columnBorderType,%20const%20Scalar&%20borderValue)
+        
 */
 
 
@@ -247,7 +279,29 @@ int main(int ac, char* av[]){
 
     // To write the file, use:            
     writeRowInFile(results, "NonSepTest", src.size(), cv::Size(3,3), 0.0222);
-    
+
     // At the end, close the file
     closeFile(results);
+*/
+
+/*
+    //ApplyNoSeparableLinearFilter(src, dst, 9);
+    //ApplySeparableLinearFilter(src, dst, 9);
+    //ApplyGaussianFilter(src, dst, 9);
+    double elapsedTime = 0;
+    ApplyGaussianFilter(src, dst, 9, elapsedTime);
+    std::cout << "Time: " << elapsedTime <<std::endl;
+
+    std::ofstream results;
+    createNewFile(results, "results.txt");
+    writeRowInFile(results, "NonSepTest", src.size(), cv::Size(3,3), 0.0222);
+    closeFile(results); 
+
+    // Test
+    // Create a window for display.
+    cv::namedWindow( "Original", cv::WINDOW_AUTOSIZE );  
+    cv::namedWindow( "Filtrada", cv::WINDOW_AUTOSIZE );  
+    // Show our image inside it.
+    cv::imshow( "Original", src);    
+    cv::imshow( "Filtrada", dst);   
 */
