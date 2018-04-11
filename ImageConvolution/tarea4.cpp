@@ -9,10 +9,10 @@
 #include <string>
 
 // Define 10 runs for time averaging
-#define nRuns 10
+#define nRuns 5
 // Define kernel sizes
-//const std::vector<int> kernelSizes = {3,9,27,49,81,243,399,511,729,1023};
-const std::vector<int> kernelSizes = {3,9,27,49,81};
+const std::vector<int> kernelSizes = {3,9,27,49,81,243,399,511,729,1023};
+//const std::vector<int> kernelSizes = {3,9,27,49,81};
 
 // Boost program options
 namespace po = boost::program_options;
@@ -48,25 +48,31 @@ double ApplySpaceFilter(const cv::Mat& src, cv::Mat& dst, cv::Ptr<cv::FilterEngi
 }
 
 // ------------------------------
+// Prepare Kernel
+// ------------------------------
+void makeKernel(cv::Mat& kernel, int kernel_size)
+{
+    kernel = cv::Mat::ones( kernel_size, kernel_size, CV_32F )/ (float)(kernel_size*kernel_size);
+}
+
+// ------------------------------
 // Linear filters
 // ------------------------------
 
 // No separable filter
-void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size, double& elapsedTime)
+void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, const cv::Mat& kernel, double& elapsedTime)
 {
-    // Creating a kernel
-    cv::Mat kernel = cv::Mat::ones( kernel_size, kernel_size, CV_32F )/ (float)(kernel_size*kernel_size);
     // Applying the filter
     cv::Ptr<cv::FilterEngine> filter2D = cv::createLinearFilter(src.type(), dst.type(), kernel);
     elapsedTime = ApplySpaceFilter(src,dst,filter2D);
 }
 
 // Separable filter
-void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size, double& elapsedTime)
+void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, const cv::Mat& kernel, double& elapsedTime)
 {
     // Creating kernels
-    cv::Mat rowkernel = cv::Mat::ones( kernel_size, 1, CV_32F )/ (float)(kernel_size);
-    cv::Mat colkernel = cv::Mat::ones( 1, kernel_size, CV_32F )/ (float)(kernel_size);
+    cv::Mat rowkernel = kernel.row(0);
+    cv::Mat colkernel = kernel.col(0);
     // Applying the filter
     cv::Ptr<cv::FilterEngine> filter2D = cv::createSeparableLinearFilter(src.type(), dst.type(), rowkernel, colkernel);
     elapsedTime = ApplySpaceFilter(src,dst,filter2D);
@@ -193,6 +199,9 @@ int main(int ac, char* av[]){
                 for(int kSize : kernelSizes)
                 {
                     double timeSum = 0;
+                    // Create kernel
+                    cv::Mat kernel;
+                    makeKernel(kernel, kSize);
                     // ##################
                     // Gaussian
                     // ##################
@@ -215,7 +224,7 @@ int main(int ac, char* av[]){
                     for(int i = 0; i < nRuns; i++)
                     {
                         double elapsedTime = 0;
-                        ApplySeparableLinearFilter(src, dst, kSize, elapsedTime);
+                        ApplySeparableLinearFilter(src, dst, kernel, elapsedTime);
                         timeSum += elapsedTime;
                     }
                     // Average
@@ -229,7 +238,7 @@ int main(int ac, char* av[]){
                     for(int i = 0; i < nRuns; i++)
                     {
                         double elapsedTime = 0;
-                        ApplyNoSeparableLinearFilter(src, dst, kSize, elapsedTime);
+                        ApplyNoSeparableLinearFilter(src, dst, kernel, elapsedTime);
                         timeSum += elapsedTime;
                     }
                     // Average
