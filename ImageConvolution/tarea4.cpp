@@ -26,6 +26,7 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 
 
 double divergencia(cv::Mat& img1, cv::Mat& img2){
+
     double diver=0;
     cv::Mat diffM;
     absdiff(img1, img2,diffM);
