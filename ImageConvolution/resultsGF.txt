@@ -1,0 +1,2 @@
+Type	ImageSize	KernelSize	AvgTime
+Gauss_Frequency	220x220	3x3	0.0205067

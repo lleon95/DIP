@@ -1,8 +1,9 @@
 set(CMAKE_CXX_STANDARD 11)
-set( OpenCV_FOUND 1 )
-cmake_minimum_required(VERSION 2.4.9)
+cmake_minimum_required(VERSION 2.8)
 project( tarea4 )
-set( OpenCV_DIR "/usr/local/share/OpenCV" )
 find_package( OpenCV REQUIRED )
+FIND_PACKAGE( Boost 1.58 COMPONENTS program_options REQUIRED )
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
+
 add_executable( tarea4 tarea4.cpp )
-target_link_libraries( tarea4 ${OpenCV_LIBS} -lboost_program_options )
+target_link_libraries( tarea4 ${OpenCV_LIBS} ${Boost_LIBRARIES} )

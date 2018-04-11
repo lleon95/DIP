@@ -1,15 +1,13 @@
-#include <cv.h>
-#include <highgui.h>
-#include <stdio.h>
-#include <iostream>
-#include <boost/program_options.hpp>
-#include <numeric>
-#include <chrono>
-#include <fstream>
-#include <string>
 
+#include <boost/program_options.hpp>
+#include <cmath>
+#include  "file_management.cpp"
+#include "space_filter.cpp"
+#include "frequency_filter.cpp"
 // Define 10 runs for time averaging
-#define nRuns 10
+#define nRuns 1
+
+
 // Define kernel sizes
 //const std::vector<int> kernelSizes = {3,9,27,49,81,243,399,511,729,1023};
 const std::vector<int> kernelSizes = {3,9,27,49,81};
@@ -27,103 +25,30 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 
 
 
-// ########################################################################################
-// Space - Filters
-// ########################################################################################
+double divergencia(cv::Mat& img1, cv::Mat& img2){
+    double diver=0;
+    cv::Mat diffM;
+    absdiff(img1, img2,diffM);
 
-// ------------------------------
-// Get time and apply filter
-// ------------------------------
-double ApplySpaceFilter(const cv::Mat& src, cv::Mat& dst, cv::Ptr<cv::FilterEngine> filter2D)
-{
-    // Start counter
-    auto start = std::chrono::high_resolution_clock::now();
-    // Apply Filter
-    filter2D->apply(src, dst);
-    // Stop and record counter
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> diff = end-start;
-    // Return time difference
-    return diff.count();
+    for(int i=0;i<diffM.rows; i++ ){
+      for(int j=0; i<diffM.cols; j++){
+
+        double pixel= diffM.at<double>(i,j);
+        diver= diver+ pixel*pixel;
+      }
+    }
+    return diver/(diffM.rows*diffM.cols);
+
 }
-
-// ------------------------------
-// Linear filters
-// ------------------------------
-
-// No separable filter
-void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size, double& elapsedTime)
-{
-    // Creating a kernel
-    cv::Mat kernel = cv::Mat::ones( kernel_size, kernel_size, CV_32F )/ (float)(kernel_size*kernel_size);
-    // Applying the filter
-    cv::Ptr<cv::FilterEngine> filter2D = cv::createLinearFilter(src.type(), dst.type(), kernel);
-    elapsedTime = ApplySpaceFilter(src,dst,filter2D);
-}
-
-// Separable filter
-void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size, double& elapsedTime)
-{
-    // Creating kernels
-    cv::Mat rowkernel = cv::Mat::ones( kernel_size, 1, CV_32F )/ (float)(kernel_size);
-    cv::Mat colkernel = cv::Mat::ones( 1, kernel_size, CV_32F )/ (float)(kernel_size);
-    // Applying the filter
-    cv::Ptr<cv::FilterEngine> filter2D = cv::createSeparableLinearFilter(src.type(), dst.type(), rowkernel, colkernel);
-    elapsedTime = ApplySpaceFilter(src,dst,filter2D);
-}
-
-// ------------------------------
-// Gaussian filter
-// ------------------------------
-// Sigma computation
-double sigmaCompute(int kernel_size)
-{
-    return (kernel_size + 2)/6;
-}
-
-// Gaussian filter
-void ApplyGaussianFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size, double& elapsedTime)
-{
-    // Compute sigma
-    double sigma = sigmaCompute(kernel_size);
-    // Create an applicable filter
-    cv::Ptr<cv::FilterEngine> filter2D = cv::createGaussianFilter(src.type(), cv::Size(kernel_size,kernel_size), sigma, sigma);
-    // Apply
-    elapsedTime = ApplySpaceFilter(src,dst,filter2D);
-    
-}
-
-// ########################################################################################
-// File management and tabulation
-// ########################################################################################
-void createNewFile(std::ofstream& newFile, std::string filename)
-{
-    // Create and open a new file
-    newFile.open(filename);
-    // Create header
-    newFile << "Type\tImageSize\tKernelSize\tAvgTime\n";
-} 
-
-void closeFile(std::ofstream& file)
-{
-    file.close();
-}
-
-void writeRowInFile(std::ofstream& file, std::string registerType ,cv::Size ImageSize, cv::Size KernelSize, double AvgTime)
-{
-    file << registerType << "\t" << ImageSize.width << "x" << ImageSize.height << "\t" <<  KernelSize.width << "x" << KernelSize.height << "\t" << AvgTime << std::endl;
-}
-
-
 // ########################################################################################
 // Main Routine
 // ########################################################################################
 
 
 int main(int ac, char* av[]){
-    
+
     // Vars needed
-    cv::Mat src, dst;
+    cv::Mat src, dst,kernel;
     int kernel_size;
 
     try {
@@ -133,8 +58,8 @@ int main(int ac, char* av[]){
         */
         po::options_description desc("Allowed options");
         desc.add_options()
-            ("help", "produce help message")
-            ("input-file", po::value< std::vector<std::string> >(), "input file")
+            ("help,h", "produce help message")
+            ("input-file,i", po::value< std::vector<std::string> >(), "input file Usage: ./tarea4 -i picture1 picture2 [...]")
         ;
 
         po::positional_options_description p;
@@ -148,8 +73,7 @@ int main(int ac, char* av[]){
         /*
             Help message
         */
-        if (vm.count("help")) {
-            std::cout << "Usage: ./tarea4 picture1 picture2 [...]\n";
+        if (vm.count("help")) {;
             std::cout << desc;
             return 0;
         }
@@ -157,15 +81,24 @@ int main(int ac, char* av[]){
         /*
             Loading images from args
         */
-       
+
         if (vm.count("input-file"))
         {
-           
-            // Image path vector       
+
+            // Image path vector
             std::vector<std::string> path = vm["input-file"].as< std::vector<std::string> >();
+
+
             // Open new File for log
-            std::ofstream results;
-            createNewFile(results, "results.txt");
+            std::ofstream resultsSLS,resultsNSLS, resultsGS,resultsLF,resultsGF,diver ;
+            createNewFile(resultsSLS, "resultsSLS.txt");
+            createNewFile(resultsNSLS, "resultsNSLS.txt");
+            createNewFile(resultsGS, "resultsGS.txt");
+            createNewFile(resultsLF, "resultsLF.txt");
+            createNewFile(resultsGF, "resultsGF.txt");
+            createNewFile(diver, "divergencia.txt");
+
+
             // Explore all images
             std::cout << "Starting..." << std::endl;
             for(int i = 0; i < path.size(); i++)
@@ -176,18 +109,18 @@ int main(int ac, char* av[]){
                 // Read the file
                 src = cv::imread(path[i], CV_LOAD_IMAGE_COLOR);
                 std::cout << "Image: " << path[i] << " loaded..." << std::endl;
-                cvtColor(src, src, CV_BGR2GRAY);  
+                cvtColor(src, src, CV_BGR2GRAY);
                 dst = src.clone();
                 // Check for invalid input
-                if(! src.data )                              
+                if(! src.data )
                 {
                     std::cout <<  "Could not open or find the image" << "\n" ;
                     return -1;
-                } 
+                }
                 // Get size image
                 cv::Size srcSize = src.size();
                 // ------------------------------
-                // Run SPACE filtering 
+                // Run SPACE filtering
                 // ------------------------------
                 // Run each kernel
                 for(int kSize : kernelSizes)
@@ -204,8 +137,9 @@ int main(int ac, char* av[]){
                         ApplyGaussianFilter(src, dst, kSize, elapsedTime);
                         timeSum += elapsedTime;
                     }
+                    cv::Mat dstGS=dst;
                     // Average
-                    writeRowInFile(results, "Gauss_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    writeRowInFile(resultsGS, "Gauss_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
                     // ##################
                     // SeparableLinear
                     // ##################
@@ -218,8 +152,9 @@ int main(int ac, char* av[]){
                         ApplySeparableLinearFilter(src, dst, kSize, elapsedTime);
                         timeSum += elapsedTime;
                     }
+                    cv::Mat dstLS=dst;
                     // Average
-                    writeRowInFile(results, "SepLinear_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    writeRowInFile(resultsSLS, "SepLinear_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
                     // ##################
                     // Non-SeparableLinear
                     // ##################
@@ -233,20 +168,60 @@ int main(int ac, char* av[]){
                         timeSum += elapsedTime;
                     }
                     // Average
-                    writeRowInFile(results, "NonSepLinear_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    writeRowInFile(resultsNSLS, "NonSepLinear_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+
+                    // ##################
+                    // Gaussian
+                    // ##################
+                    std::cout << "Filtering with Gaussian in Frequency - ImageSize:" << srcSize.width << "x" << srcSize.height << " KernelSize:"<< kSize << std::endl;
+                    // Run each kernel n times for averaging
+                    impulseResponseGaussian(kernel,kSize);
+                    for(int i = 0; i < nRuns; i++)
+                    {
+                        double elapsedTime = 0;
+                        elapsedTime=applyFrequencyFilter(src,kernel,dst);
+                        timeSum += elapsedTime;
+                    }
+                    // Average
+                    writeRowInFile(resultsGF, "Gauss_Frequency", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    double errorG= divergencia(dstGS,dst);
+                    writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+
+                    // ##################
+                    // Linear
+                    // ##################
+                    std::cout << "Filtering with Linear Filter in frequency - ImageSize:" << srcSize.width << "x" << srcSize.height << " KernelSize:"<< kSize << std::endl;
+                    // Run each kernel n times for averaging
+                    timeSum = 0;
+                    impulseResponseLinear(kernel,kSize);
+                    for(int i = 0; i < nRuns; i++)
+                    {
+                        double elapsedTime = 0;
+                        elapsedTime=applyFrequencyFilter(src,kernel,dst);
+                        timeSum += elapsedTime;
+                    }
+                    // Average
+                    writeRowInFile(resultsLF, "Linear_Frequency", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    double errorL= divergencia(dstLS,dst);
+                    writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
                 }
 
 
                 // ------------------------------
                 // Debugging
                 // ------------------------------
-                // See below 
-                
+                // See below
+
             }
-            //cv::waitKey(0);   // Wait for a keystroke in the window 
+            //cv::waitKey(0);   // Wait for a keystroke in the window
             std::cout << "Execution Finished..." << std::endl;
-            closeFile(results);
-            
+            closeFile(resultsSLS);
+            closeFile(resultsNSLS);
+            closeFile(resultsGS);
+            closeFile(resultsGF);
+            closeFile(resultsLF);
+            closeFile(diver);
+
         }
         else
         {
@@ -261,7 +236,7 @@ int main(int ac, char* av[]){
         return 1;
     }
     return 0;
-    
+
 }
 
 
@@ -274,7 +249,7 @@ int main(int ac, char* av[]){
         https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#Ptr%3CFilterEngine%3E%20createSeparableLinearFilter(int%20srcType,%20int%20dstType,%20InputArray%20rowKernel,%20InputArray%20columnKernel,%20Point%20anchor,%20double%20delta,%20int%20rowBorderType,%20int%20columnBorderType,%20const%20Scalar&%20borderValue)
         https://docs.opencv.org/2.4/modules/core/doc/basic_structures.html
         https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#Ptr%3CFilterEngine%3E%20createLinearFilter(int%20srcType,%20int%20dstType,%20InputArray%20kernel,%20Point%20_anchor,%20double%20delta,%20int%20rowBorderType,%20int%20columnBorderType,%20const%20Scalar&%20borderValue)
-        
+
 */
 
 
@@ -299,7 +274,7 @@ int main(int ac, char* av[]){
     std::ofstream results;
     createNewFile(results, "results.txt");
 
-    // To write the file, use:            
+    // To write the file, use:
     writeRowInFile(results, "NonSepTest", src.size(), cv::Size(3,3), 0.0222);
 
     // At the end, close the file
@@ -320,13 +295,13 @@ int main(int ac, char* av[]){
     std::ofstream results;
     createNewFile(results, "results.txt");
     writeRowInFile(results, "NonSepTest", src.size(), cv::Size(3,3), 0.0222);
-    closeFile(results); 
+    closeFile(results);
 
     // Test
     // Create a window for display.
-    cv::namedWindow( "Original", cv::WINDOW_AUTOSIZE );  
-    cv::namedWindow( "Filtrada", cv::WINDOW_AUTOSIZE );  
+    cv::namedWindow( "Original", cv::WINDOW_AUTOSIZE );
+    cv::namedWindow( "Filtrada", cv::WINDOW_AUTOSIZE );
     // Show our image inside it.
-    cv::imshow( "Original", src);    
-    cv::imshow( "Filtrada", dst);   
+    cv::imshow( "Original", src);
+    cv::imshow( "Filtrada", dst);
 */
