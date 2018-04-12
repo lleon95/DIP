@@ -10,6 +10,13 @@
 
 
 
+// ------------------------------
+// Prepare Kernel
+// ------------------------------
+void makeKernel(cv::Mat& kernel, int kernel_size)
+{
+    kernel = cv::Mat::ones( kernel_size, kernel_size, CV_32F )/ (float)(kernel_size*kernel_size);
+}
 
 // ########################################################################################
 // Space - Filters
@@ -36,21 +43,20 @@ double ApplySpaceFilter(const cv::Mat& src, cv::Mat& dst, cv::Ptr<cv::FilterEngi
 // ------------------------------
 
 // No separable filter
-void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size, double& elapsedTime)
+void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, cv::Mat& kernel, double& elapsedTime)
 {
-    // Creating a kernel
-    cv::Mat kernel = cv::Mat::ones( kernel_size, kernel_size, CV_32F )/ (float)(kernel_size*kernel_size);
+
     // Applying the filter
     cv::Ptr<cv::FilterEngine> filter2D = cv::createLinearFilter(src.type(), dst.type(), kernel);
     elapsedTime = ApplySpaceFilter(src,dst,filter2D);
 }
 
 // Separable filter
-void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size, double& elapsedTime)
+void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, cv::Mat& kernel, double& elapsedTime)
 {
     // Creating kernels
-    cv::Mat rowkernel = cv::Mat::ones( kernel_size, 1, CV_32F )/ (float)(kernel_size);
-    cv::Mat colkernel = cv::Mat::ones( 1, kernel_size, CV_32F )/ (float)(kernel_size);
+    cv::Mat rowkernel = kernel.row(0);
+    cv::Mat colkernel = kernel.col(0);
 
 
     // Applying the filter

@@ -5,13 +5,9 @@
 #include "space_filter.cpp"
 #include "frequency_filter.cpp"
 // Define 10 runs for time averaging
-<<<<<<< HEAD
 #define nRuns 1
 
 
-=======
-#define nRuns 5
->>>>>>> 9c201d0bbd5b324d5ee75875e5ed6281900bab67
 // Define kernel sizes
 const std::vector<int> kernelSizes = {3,9,27,49,81,243,399,511,729,1023};
 //const std::vector<int> kernelSizes = {3,9,27,49,81};
@@ -31,54 +27,12 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 
 double divergencia(cv::Mat& img1, cv::Mat& img2){
 
-<<<<<<< HEAD
     double diver=0;
     cv::Mat diffM;
     absdiff(img1, img2,diffM);
 
     for(int i=0;i<diffM.rows; i++ ){
       for(int j=0; i<diffM.cols; j++){
-=======
-// ------------------------------
-// Prepare Kernel
-// ------------------------------
-void makeKernel(cv::Mat& kernel, int kernel_size)
-{
-    kernel = cv::Mat::ones( kernel_size, kernel_size, CV_32F )/ (float)(kernel_size*kernel_size);
-}
-
-// ------------------------------
-// Linear filters
-// ------------------------------
-
-// No separable filter
-void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, const cv::Mat& kernel, double& elapsedTime)
-{
-    // Applying the filter
-    cv::Ptr<cv::FilterEngine> filter2D = cv::createLinearFilter(src.type(), dst.type(), kernel);
-    elapsedTime = ApplySpaceFilter(src,dst,filter2D);
-}
-
-// Separable filter
-void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, const cv::Mat& kernel, double& elapsedTime)
-{
-    // Creating kernels
-    cv::Mat rowkernel = kernel.row(0);
-    cv::Mat colkernel = kernel.col(0);
-    // Applying the filter
-    cv::Ptr<cv::FilterEngine> filter2D = cv::createSeparableLinearFilter(src.type(), dst.type(), rowkernel, colkernel);
-    elapsedTime = ApplySpaceFilter(src,dst,filter2D);
-}
-
-// ------------------------------
-// Gaussian filter
-// ------------------------------
-// Sigma computation
-double sigmaCompute(int kernel_size)
-{
-    return (kernel_size + 2)/6;
-}
->>>>>>> 9c201d0bbd5b324d5ee75875e5ed6281900bab67
 
         double pixel= diffM.at<double>(i,j);
         diver= diver+ pixel*pixel;
