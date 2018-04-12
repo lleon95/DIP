@@ -39,16 +39,16 @@ xlabel("Cantidad de pixeles (Kilo)");
 ylabel ("Tamaño de kernel");
 zlabel ("tiempo (segundos)");
 hidden('off');
-title("Resultados de Filtro Separable en el espacio")
+title("Resultados de Filtro Separable en el Espacio")
 
 figure(3);
 colormap(gray);
 mesh(t_pixels,kernel_size,LF);
 xlabel("Cantidad de pixeles (Kilo)");
 ylabel ("Tamaño de kernel");
-zlabel ("tiempo (segundos)");
+zlabel ("Tiempo (segundos)");
 hidden('off');
-title("Resultados de Filtro Lineal en la frecuencia")
+title("Resultados de Filtro Lineal en la Frecuencia")
 
 figure(4);
 # Linear - Frequency
@@ -65,4 +65,19 @@ xlabel("Cantidad de pixeles (Kilo)");
 ylabel ("Tamaño de kernel");
 zlabel ("tiempo (segundos)");
 hidden('off');
-title("Resultados de Filtro Lineal en espacio y frecuencia")
+title("Resultados de Filtro Lineal en espacio y frecuencia");
+
+figure(5);
+# Gaussiano - Space
+g1 = mesh(t_pixels,kernel_size,GS, "facecolor", "none", "edgecolor", "b");
+hold on;
+# Gaussian - Frequency
+g2 = mesh(t_pixels,kernel_size,GF, "facecolor", "none", "edgecolor", "r");
+# Legend
+legend([g1,g2], {"Gaussiano - Espacio", "Gaussiano - Frecuencia"});
+xlabel("Cantidad de pixeles (Kilo)");
+ylabel ("Tamaño de kernel");
+zlabel ("tiempo (segundos)");
+hidden('off');
+title("Resultados de filtro Gaussiano en espacio y frecuencia");
+
