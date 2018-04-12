@@ -1,7 +1,7 @@
 t_pixels =[48400 98304 173280 262144 302570 480000 518400 907148 960000 2073600];
 kernel_size= [3 9 27 49 81 243 399 511 729 1023];
 
-t_pixels=tpixels ./1000;
+t_pixels=t_pixels ./1000;
 
 res= load("resultados.csv");
 
@@ -51,14 +51,16 @@ hidden('off');
 title("Resultados de Filtro Lineal en la frecuencia")
 
 figure(4);
-colormap(winter);
-mesh(t_pixels,kernel_size,LF);
+# Linear - Frequency
+h1 = mesh(t_pixels,kernel_size,LF, "facecolor", "none", "edgecolor", "b");
 hold on;
-colormap(autumn);
-mesh(t_pixels,kernel_size,NSLS);
+# Non Separable Linear - Space
+h2 = mesh(t_pixels,kernel_size,NSLS, "facecolor", "none", "edgecolor", "g");
 hold on;
-colormap(gray);
-mesh(t_pixels,kernel_size,SLS);
+# Separable Linear - Space
+h3 = mesh(t_pixels,kernel_size,SLS, "facecolor", "none", "edgecolor", "r");
+# Legend
+legend([h1,h2,h3], {"Lineal - Frecuencia", "Lineal No Separable - Espacio", "Linea Separable - Espacio"});
 xlabel("Cantidad de pixeles (Kilo)");
 ylabel ("Tamaño de kernel");
 zlabel ("tiempo (segundos)");
