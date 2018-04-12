@@ -5,7 +5,7 @@
 #include "space_filter.cpp"
 #include "frequency_filter.cpp"
 // Define 10 runs for time averaging
-#define nRuns 1
+#define nRuns 5
 
 
 // Define kernel sizes
@@ -29,12 +29,12 @@ double divergencia(cv::Mat& img1, cv::Mat& img2){
 
     double diver=0;
     cv::Mat diffM;
-    absdiff(img1, img2,diffM);
+    cv::absdiff(img1, img2,diffM);
 
     for(int i=0;i<diffM.rows; i++ ){
       for(int j=0; i<diffM.cols; j++){
 
-        double pixel= diffM.at<double>(i,j);
+        double pixel= std::abs(img1.at<double>(i,j)-img2.at<double>(i,j));
         diver= diver+ pixel*pixel;
       }
     }
@@ -174,6 +174,7 @@ int main(int ac, char* av[]){
                     // Average
                     writeRowInFile(resultsNSLS, "NonSepLinear_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
 
+
                     // ##################
                     // Gaussian
                     // ##################
@@ -188,8 +189,8 @@ int main(int ac, char* av[]){
                     }
                     // Average
                     writeRowInFile(resultsGF, "Gauss_Frequency", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
-                    double errorG= divergencia(dstGS,dst);
-                    writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    //double errorG= divergencia(dstGS,dst);
+                    //writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
 
                     // ##################
                     // Linear
@@ -206,8 +207,8 @@ int main(int ac, char* av[]){
                     }
                     // Average
                     writeRowInFile(resultsLF, "Linear_Frequency", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
-                    double errorL= divergencia(dstLS,dst);
-                    writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    //double errorL= divergencia(dstLS,dst);
+                    //writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
                 }
 
 
