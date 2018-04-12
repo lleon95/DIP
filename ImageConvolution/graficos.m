@@ -1,7 +1,7 @@
 t_pixels =[48400 98304 173280 262144 302570 480000 518400 907148 960000 2073600];
 kernel_size= [3 9 27 49 81 243 399 511 729 1023];
 
-t_pixels=tpixels ./1000;
+t_pixels=t_pixels ./1000;
 
 res= load("resultados.csv");
 
