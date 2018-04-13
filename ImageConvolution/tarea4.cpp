@@ -45,19 +45,28 @@ double divergencia(cv::Mat& img1, cv::Mat& img2){
     cv::Mat diffM;
     printImages(img1, img2);
 
-
-    std::cout << "1: "<< img1.depth() << std::endl;
-    std::cout << "2: "<< img2.depth() << std::endl;
+    // Standarize
+    if(img1.depth() == 0)
+    {   
+        img1.convertTo(img1, CV_32F);
+        img1 = img1/255;
+    }
+         
     cv::absdiff(img1, img2, diffM);
 
-    
-    /* for(int i=0;i<diffM.rows; i++ ){
+    printImages(img1, img2);
+    for(int i=0;i<diffM.rows; i++ ){
       for(int j=0; i<diffM.cols; j++){
-        double pixel= std::abs(img1.at<double>(i,j)-img2.at<double>(i,j));
-        diver= diver+ pixel*pixel;
+            
+          double pixel = diffM.at<double>(i,j);
+          diver+=pixel;
+          std::cout << "Diver " << diver << std::endl;
+        //double pixel= std::abs(img1.at<double>(i,j)-img2.at<double>(i,j));
+        //diver= diver+ pixel*pixel;
       }
-    } */
-    return diver/(diffM.rows*diffM.cols);
+    } 
+    //return diver/(diffM.rows*diffM.cols);
+    return 0;
 
 }
 // ########################################################################################
@@ -174,6 +183,7 @@ int main(int ac, char* av[]){
                         ApplyGaussianFilter(src, dst, kSize, elapsedTime);
                         timeSum += elapsedTime;
                     }
+                    
                     cv::Mat dstGS=dst.clone();
                     // Average
                     writeRowInFile(resultsGS, "Gauss_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
@@ -190,6 +200,8 @@ int main(int ac, char* av[]){
                         timeSum += elapsedTime;
                     }
                     cv::Mat dstLS=dst.clone();
+                    
+                    
                     // Average
                     writeRowInFile(resultsSLS, "SepLinear_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
                     // ##################
@@ -206,7 +218,6 @@ int main(int ac, char* av[]){
                     }
                     // Average
                     writeRowInFile(resultsNSLS, "NonSepLinear_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
-
                     // ##################
                     // Gaussian
                     // ##################
@@ -225,7 +236,7 @@ int main(int ac, char* av[]){
                     if(exeMode !=0 )
                     {
                         double errorG= divergencia(dstGS,dst);
-                        //writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                        writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), errorG);
                     }
 
                     // ##################
@@ -246,7 +257,7 @@ int main(int ac, char* av[]){
                     if(exeMode !=0 )
                     {
                         double errorL= divergencia(dstLS,dst);
-                        //writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                        writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), errorL);
                     }
                 }
 
