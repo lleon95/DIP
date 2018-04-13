@@ -61,7 +61,7 @@ double divergencia(cv::Mat& img1, cv::Mat& img2){
             
           pixel = diffM.at<double>(i,j);
           try{
-            std::cout << pixel << std::endl;
+            std::cout << diver << std::endl;
             diver+=pixel;
           }
           catch(std::exception& e)
@@ -72,6 +72,7 @@ double divergencia(cv::Mat& img1, cv::Mat& img2){
         //diver= diver+ pixel*pixel;
       }
     } 
+    std::cout << "end" << std::endl;
     //return diver/(diffM.rows*diffM.cols);
     return 0;
 

@@ -1,2 +1,0 @@
-Type	ImageSize	KernelSize	AvgTime
-Linear_Frequency	220x220	9x9	0.0159558
