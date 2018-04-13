@@ -54,8 +54,8 @@ void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, cv::Mat& ker
 void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, cv::Mat& kernel, double& elapsedTime)
 {
     // Creating kernels
-    cv::Mat rowkernel = cv::Mat::ones( 9, 1, CV_32F )/ (float)(9);
-    cv::Mat colkernel = cv::Mat::ones( 1, 9, CV_32F )/ (float)(9);
+    cv::Mat rowkernel = kernel.row(0);
+    cv::Mat colkernel = kernel.col(0);
 
 
     // Applying the filter

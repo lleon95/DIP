@@ -43,7 +43,8 @@ double divergencia(cv::Mat& img1, cv::Mat& img2){
 
     double diver=0;
     cv::Mat diffM;
-    printImages(img1, img2);
+    // Uncomment in case of debugging
+    //printImages(img1, img2);
 
     // Standarize
     if(img1.depth() == 0)
@@ -86,7 +87,7 @@ int main(int ac, char* av[]){
         po::options_description desc("Allowed options");
         desc.add_options()
             ("help,h", "produce help message")
-            ("mode,m", po::value<int>()->default_value(0), "produce Benchmark when m=0 or produce the Divergence when m=1")
+            ("mode,m", po::value<int>()->default_value(0), "produce Benchmark when 0 or produce the Divergence when 1")
             ("input-file,i", po::value< std::vector<std::string> >(), "input file Usage: ./tarea4 -i picture1 picture2 [...]")
         ;
 
@@ -117,7 +118,11 @@ int main(int ac, char* av[]){
             // Divergence
             nRuns = 1;
             kernelSizes = {9};
+            // Print transaction
+            std::cout << "OPERATION: Divergence" << std::endl;
         }
+        else
+            std::cout << "OPERATION: Benchmark" << std::endl;
 
         /*
             Loading images from args
@@ -151,7 +156,7 @@ int main(int ac, char* av[]){
                 src = cv::imread(path[i], CV_LOAD_IMAGE_GRAYSCALE);
                 std::cout << "Image: " << path[i] << " loaded..." << std::endl;
                 //cvtColor(src, src, CV_BGR2GRAY);
-                dst = src.clone();
+                
                 // Check for invalid input
                 if(! src.data )
                 {
@@ -166,6 +171,8 @@ int main(int ac, char* av[]){
                 // Run each kernel
                 for(int kSize : kernelSizes)
                 {
+                    // Restore type
+                    dst = src.clone();
                     double timeSum = 0;
                     // Create kernel
                     cv::Mat kernel;

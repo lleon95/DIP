@@ -1,3 +1,5 @@
 Type	ImageSize	KernelSize	AvgTime
-Gauss_diver	220x220	9x9	1.07104e-48
-Linear_diver	220x220	9x9	-4.56177e+20
+Gauss_diver	220x220	9x9	-4.90543e-46
+Linear_diver	220x220	9x9	4.07668e+296
+Gauss_diver	384x256	9x9	-7.20763e+21
+Linear_diver	384x256	9x9	1.35114e-07
