@@ -54,7 +54,6 @@ double divergencia(cv::Mat& img1, cv::Mat& img2){
          
     cv::absdiff(img1, img2, diffM);
 
-    printImages(img1, img2);
     for(int i=0;i<diffM.rows; i++ ){
       for(int j=0; i<diffM.cols; j++){
             
