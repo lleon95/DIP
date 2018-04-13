@@ -56,24 +56,15 @@ double divergencia(cv::Mat& img1, cv::Mat& img2){
     diffM = diffM / (img1.rows * img1.cols);
 
     double pixel = 0;
-    for(int i=0;i<diffM.rows-200; i++ ){
-      for(int j=0; i<diffM.cols-200; j++){
+    for(int i=0;i<diffM.rows; i++ ){
+      for(int j=0; j<diffM.cols; j++){
             
           pixel = diffM.at<double>(i,j);
-          try{
-            std::cout << pixel << std::endl;
-            diver+=pixel;
-          }
-          catch(std::exception& e)
-          {
-              std::cout << pixel << std::endl;
-          }
-        //double pixel= std::abs(img1.at<double>(i,j)-img2.at<double>(i,j));
-        //diver= diver+ pixel*pixel;
+          diver+=pixel;
+
       }
     } 
-    //return diver/(diffM.rows*diffM.cols);
-    return 0;
+    return diver/(diffM.rows*diffM.cols);
 
 }
 // ########################################################################################
@@ -264,7 +255,7 @@ int main(int ac, char* av[]){
                     if(exeMode !=0 )
                     {
                         double errorL= divergencia(dstLS,dst);
-                        writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), errorL);
+                        writeRowInFile(diver, "Linear_diver", src.size(), cv::Size(kSize,kSize), errorL);
                     }
                 }
 
