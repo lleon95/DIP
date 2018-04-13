@@ -49,10 +49,10 @@ double divergencia(cv::Mat& img1, cv::Mat& img2){
         printImages(img1, img2);
 
     // Standarize
-    if(img1.depth() == 0)
+    if(img1.depth() == CV_8U)
     {   
         img1.convertTo(img1, CV_32F);
-        img1 = img1/255;
+        img1 = img1/255; // Size of 1 byte in CV_8U
     }
          
     cv::absdiff(img1, img2, diffM);
