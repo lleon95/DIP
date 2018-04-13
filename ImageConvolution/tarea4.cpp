@@ -53,13 +53,13 @@ double divergencia(cv::Mat& img1, cv::Mat& img2){
     }
          
     cv::absdiff(img1, img2, diffM);
+    diffM = diffM / (img1.rows * img1.cols);
 
     for(int i=0;i<diffM.rows; i++ ){
       for(int j=0; i<diffM.cols; j++){
             
           double pixel = diffM.at<double>(i,j);
           diver+=pixel;
-          std::cout << "Diver " << diver << std::endl;
         //double pixel= std::abs(img1.at<double>(i,j)-img2.at<double>(i,j));
         //diver= diver+ pixel*pixel;
       }

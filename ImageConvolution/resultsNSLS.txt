@@ -1,2 +1,2 @@
 Type	ImageSize	KernelSize	AvgTime
-NonSepLinear_Space	220x220	9x9	0.00222612
+NonSepLinear_Space	220x220	9x9	0.00198237
