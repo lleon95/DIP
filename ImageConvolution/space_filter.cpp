@@ -51,11 +51,11 @@ void ApplyNoSeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, cv::Mat& ker
 }
 
 // Separable filter
-void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, cv::Mat& kernel, double& elapsedTime)
+void ApplySeparableLinearFilter(const cv::Mat& src, cv::Mat& dst, int kernel_size, double& elapsedTime)
 {
     // Creating kernels
-    cv::Mat rowkernel = kernel.row(0);
-    cv::Mat colkernel = kernel.col(0);
+    cv::Mat rowkernel = cv::Mat::ones( kernel_size, 1, CV_32F )/ (float)(kernel_size);
+    cv::Mat colkernel = cv::Mat::ones( 1, kernel_size, CV_32F )/ (float)(kernel_size);
 
 
     // Applying the filter

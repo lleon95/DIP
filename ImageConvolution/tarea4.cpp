@@ -12,7 +12,8 @@
 
 // Define kernel sizes
 const std::vector<int> defaultKernelSizes = {3,9,27,49,81,243,399,511,729,1023};
-//const std::vector<int> kernelSizes = {3,9,27,49,81};
+// Define image mode for divergence
+bool imageMode = false;
 
 // Boost program options
 namespace po = boost::program_options;
@@ -30,11 +31,11 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 void printImages(cv::Mat& img1, cv::Mat& img2)
 {
     // Create a window for display.
-    cv::namedWindow( "Imagen1", cv::WINDOW_AUTOSIZE );
-    cv::namedWindow( "Imagen2", cv::WINDOW_AUTOSIZE );
+    cv::namedWindow( "Space", cv::WINDOW_AUTOSIZE );
+    cv::namedWindow( "Frequency", cv::WINDOW_AUTOSIZE );
     // Show our image inside it.
-    cv::imshow( "Imagen1", img1);
-    cv::imshow( "Imagen2", img2);
+    cv::imshow( "Space", img1);
+    cv::imshow( "Frequency", img2);
     // Close
     cv::waitKey(0);
 }
@@ -43,8 +44,9 @@ double divergencia(cv::Mat& img1, cv::Mat& img2){
 
     double diver=0;
     cv::Mat diffM;
-    // Uncomment in case of debugging
-    //printImages(img1, img2);
+    // Image mode
+    if(imageMode)
+        printImages(img1, img2);
 
     // Standarize
     if(img1.depth() == 0)
@@ -88,6 +90,7 @@ int main(int ac, char* av[]){
         desc.add_options()
             ("help,h", "produce help message")
             ("mode,m", po::value<int>()->default_value(0), "produce Benchmark when 0 or produce the Divergence when 1")
+            ("imageShow,s", po::value<int>()->default_value(0), "show the images per each filter execution")
             ("input-file,i", po::value< std::vector<std::string> >(), "input file Usage: ./tarea4 -i picture1 picture2 [...]")
         ;
 
@@ -110,6 +113,7 @@ int main(int ac, char* av[]){
         /*
             Other params
         */
+        // Mode
         int nRuns = numberOfRuns;
         std::vector<int> kernelSizes = defaultKernelSizes;
         int exeMode = vm["mode"].as<int>();
@@ -123,7 +127,10 @@ int main(int ac, char* av[]){
         }
         else
             std::cout << "OPERATION: Benchmark" << std::endl;
-
+        // Image showing
+        int imageModeInt = vm["imageShow"].as<int>();
+        if(imageModeInt != 0)
+            imageMode = true;
         /*
             Loading images from args
         */
@@ -201,7 +208,7 @@ int main(int ac, char* av[]){
                     for(int i = 0; i < nRuns; i++)
                     {
                         double elapsedTime = 0;
-                        ApplySeparableLinearFilter(src, dst, kernel, elapsedTime);
+                        ApplySeparableLinearFilter(src, dst, kSize, elapsedTime);
                         timeSum += elapsedTime;
                     }
                     cv::Mat dstLS=dst.clone();
@@ -240,6 +247,7 @@ int main(int ac, char* av[]){
                     writeRowInFile(resultsGF, "Gauss_Frequency", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
                     if(exeMode !=0 )
                     {
+                        std::cout << "Showing divergence between Gaussian Filters..." << std::endl;
                         double errorG= divergencia(dstGS,dst);
                         writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), errorG);
                     }
@@ -261,8 +269,9 @@ int main(int ac, char* av[]){
                     writeRowInFile(resultsLF, "Linear_Frequency", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
                     if(exeMode !=0 )
                     {
+                        std::cout << "Showing divergence between Linear Filters..." << std::endl;
                         double errorL= divergencia(dstLS,dst);
-                        writeRowInFile(diver, "Linear_diver", src.size(), cv::Size(kSize,kSize), errorL);
+                        writeRowInFile(diver, "SeparableLinear_Space", src.size(), cv::Size(kSize,kSize), errorL);
                     }
                 }
 
