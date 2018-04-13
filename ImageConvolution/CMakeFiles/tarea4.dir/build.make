@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/javier/TEC/Imagenes/git/ImageConvolution
+CMAKE_SOURCE_DIR = /home/lleon95/Git/DIP/ImageConvolution
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/javier/TEC/Imagenes/git/ImageConvolution
+CMAKE_BINARY_DIR = /home/lleon95/Git/DIP/ImageConvolution
 
 # Include any dependencies generated for this target.
 include CMakeFiles/tarea4.dir/depend.make
@@ -57,38 +57,38 @@ include CMakeFiles/tarea4.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/tarea4.dir/flags.make
 
-CMakeFiles/tarea4.dir/tarea4.cpp.o: CMakeFiles/tarea4.dir/flags.make
-CMakeFiles/tarea4.dir/tarea4.cpp.o: tarea4.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/javier/TEC/Imagenes/git/ImageConvolution/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/tarea4.dir/tarea4.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tarea4.dir/tarea4.cpp.o -c /home/javier/TEC/Imagenes/git/ImageConvolution/tarea4.cpp
+CMakeFiles/tarea4.dir/tarea4.o: CMakeFiles/tarea4.dir/flags.make
+CMakeFiles/tarea4.dir/tarea4.o: tarea4.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/lleon95/Git/DIP/ImageConvolution/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/tarea4.dir/tarea4.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tarea4.dir/tarea4.o -c /home/lleon95/Git/DIP/ImageConvolution/tarea4.cpp
 
-CMakeFiles/tarea4.dir/tarea4.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/tarea4.dir/tarea4.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/javier/TEC/Imagenes/git/ImageConvolution/tarea4.cpp > CMakeFiles/tarea4.dir/tarea4.cpp.i
+CMakeFiles/tarea4.dir/tarea4.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/tarea4.dir/tarea4.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/lleon95/Git/DIP/ImageConvolution/tarea4.cpp > CMakeFiles/tarea4.dir/tarea4.i
 
-CMakeFiles/tarea4.dir/tarea4.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/tarea4.dir/tarea4.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/javier/TEC/Imagenes/git/ImageConvolution/tarea4.cpp -o CMakeFiles/tarea4.dir/tarea4.cpp.s
+CMakeFiles/tarea4.dir/tarea4.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/tarea4.dir/tarea4.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/lleon95/Git/DIP/ImageConvolution/tarea4.cpp -o CMakeFiles/tarea4.dir/tarea4.s
 
-CMakeFiles/tarea4.dir/tarea4.cpp.o.requires:
+CMakeFiles/tarea4.dir/tarea4.o.requires:
 
-.PHONY : CMakeFiles/tarea4.dir/tarea4.cpp.o.requires
+.PHONY : CMakeFiles/tarea4.dir/tarea4.o.requires
 
-CMakeFiles/tarea4.dir/tarea4.cpp.o.provides: CMakeFiles/tarea4.dir/tarea4.cpp.o.requires
-	$(MAKE) -f CMakeFiles/tarea4.dir/build.make CMakeFiles/tarea4.dir/tarea4.cpp.o.provides.build
-.PHONY : CMakeFiles/tarea4.dir/tarea4.cpp.o.provides
+CMakeFiles/tarea4.dir/tarea4.o.provides: CMakeFiles/tarea4.dir/tarea4.o.requires
+	$(MAKE) -f CMakeFiles/tarea4.dir/build.make CMakeFiles/tarea4.dir/tarea4.o.provides.build
+.PHONY : CMakeFiles/tarea4.dir/tarea4.o.provides
 
-CMakeFiles/tarea4.dir/tarea4.cpp.o.provides.build: CMakeFiles/tarea4.dir/tarea4.cpp.o
+CMakeFiles/tarea4.dir/tarea4.o.provides.build: CMakeFiles/tarea4.dir/tarea4.o
 
 
 # Object files for target tarea4
 tarea4_OBJECTS = \
-"CMakeFiles/tarea4.dir/tarea4.cpp.o"
+"CMakeFiles/tarea4.dir/tarea4.o"
 
 # External object files for target tarea4
 tarea4_EXTERNAL_OBJECTS =
 
-tarea4: CMakeFiles/tarea4.dir/tarea4.cpp.o
+tarea4: CMakeFiles/tarea4.dir/tarea4.o
 tarea4: CMakeFiles/tarea4.dir/build.make
 tarea4: /usr/local/lib/libopencv_viz.so.2.4.9
 tarea4: /usr/local/lib/libopencv_videostab.so.2.4.9
@@ -96,7 +96,6 @@ tarea4: /usr/local/lib/libopencv_ts.a
 tarea4: /usr/local/lib/libopencv_superres.so.2.4.9
 tarea4: /usr/local/lib/libopencv_stitching.so.2.4.9
 tarea4: /usr/local/lib/libopencv_contrib.so.2.4.9
-tarea4: /usr/lib/x86_64-linux-gnu/libboost_program_options.so
 tarea4: /usr/lib/x86_64-linux-gnu/libGLU.so
 tarea4: /usr/lib/x86_64-linux-gnu/libGL.so
 tarea4: /usr/local/lib/libopencv_nonfree.so.2.4.9
@@ -114,7 +113,7 @@ tarea4: /usr/local/lib/libopencv_imgproc.so.2.4.9
 tarea4: /usr/local/lib/libopencv_flann.so.2.4.9
 tarea4: /usr/local/lib/libopencv_core.so.2.4.9
 tarea4: CMakeFiles/tarea4.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/javier/TEC/Imagenes/git/ImageConvolution/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable tarea4"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/lleon95/Git/DIP/ImageConvolution/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable tarea4"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/tarea4.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -122,7 +121,7 @@ CMakeFiles/tarea4.dir/build: tarea4
 
 .PHONY : CMakeFiles/tarea4.dir/build
 
-CMakeFiles/tarea4.dir/requires: CMakeFiles/tarea4.dir/tarea4.cpp.o.requires
+CMakeFiles/tarea4.dir/requires: CMakeFiles/tarea4.dir/tarea4.o.requires
 
 .PHONY : CMakeFiles/tarea4.dir/requires
 
@@ -131,6 +130,6 @@ CMakeFiles/tarea4.dir/clean:
 .PHONY : CMakeFiles/tarea4.dir/clean
 
 CMakeFiles/tarea4.dir/depend:
-	cd /home/javier/TEC/Imagenes/git/ImageConvolution && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/javier/TEC/Imagenes/git/ImageConvolution /home/javier/TEC/Imagenes/git/ImageConvolution /home/javier/TEC/Imagenes/git/ImageConvolution /home/javier/TEC/Imagenes/git/ImageConvolution /home/javier/TEC/Imagenes/git/ImageConvolution/CMakeFiles/tarea4.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/lleon95/Git/DIP/ImageConvolution && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/lleon95/Git/DIP/ImageConvolution /home/lleon95/Git/DIP/ImageConvolution /home/lleon95/Git/DIP/ImageConvolution /home/lleon95/Git/DIP/ImageConvolution /home/lleon95/Git/DIP/ImageConvolution/CMakeFiles/tarea4.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/tarea4.dir/depend
 

@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/javier/TEC/Imagenes/git/ImageConvolution
+CMAKE_SOURCE_DIR = /home/lleon95/Git/DIP/ImageConvolution
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/javier/TEC/Imagenes/git/ImageConvolution
+CMAKE_BINARY_DIR = /home/lleon95/Git/DIP/ImageConvolution
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/javier/TEC/Imagenes/git/ImageConvolution/CMakeFiles /home/javier/TEC/Imagenes/git/ImageConvolution/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/lleon95/Git/DIP/ImageConvolution/CMakeFiles /home/lleon95/Git/DIP/ImageConvolution/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/javier/TEC/Imagenes/git/ImageConvolution/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/lleon95/Git/DIP/ImageConvolution/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -123,32 +123,20 @@ tarea4/fast:
 	$(MAKE) -f CMakeFiles/tarea4.dir/build.make CMakeFiles/tarea4.dir/build
 .PHONY : tarea4/fast
 
-tarea4.o: tarea4.cpp.o
-
+# target to build an object file
+tarea4.o:
+	$(MAKE) -f CMakeFiles/tarea4.dir/build.make CMakeFiles/tarea4.dir/tarea4.o
 .PHONY : tarea4.o
 
-# target to build an object file
-tarea4.cpp.o:
-	$(MAKE) -f CMakeFiles/tarea4.dir/build.make CMakeFiles/tarea4.dir/tarea4.cpp.o
-.PHONY : tarea4.cpp.o
-
-tarea4.i: tarea4.cpp.i
-
+# target to preprocess a source file
+tarea4.i:
+	$(MAKE) -f CMakeFiles/tarea4.dir/build.make CMakeFiles/tarea4.dir/tarea4.i
 .PHONY : tarea4.i
 
-# target to preprocess a source file
-tarea4.cpp.i:
-	$(MAKE) -f CMakeFiles/tarea4.dir/build.make CMakeFiles/tarea4.dir/tarea4.cpp.i
-.PHONY : tarea4.cpp.i
-
-tarea4.s: tarea4.cpp.s
-
-.PHONY : tarea4.s
-
 # target to generate assembly for a file
-tarea4.cpp.s:
-	$(MAKE) -f CMakeFiles/tarea4.dir/build.make CMakeFiles/tarea4.dir/tarea4.cpp.s
-.PHONY : tarea4.cpp.s
+tarea4.s:
+	$(MAKE) -f CMakeFiles/tarea4.dir/build.make CMakeFiles/tarea4.dir/tarea4.s
+.PHONY : tarea4.s
 
 # Help Target
 help:
