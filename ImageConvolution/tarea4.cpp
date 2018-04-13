@@ -271,7 +271,7 @@ int main(int ac, char* av[]){
                     {
                         std::cout << "Showing divergence between Linear Filters..." << std::endl;
                         double errorL= divergencia(dstLS,dst);
-                        writeRowInFile(diver, "Linear_Space", src.size(), cv::Size(kSize,kSize), errorL);
+                        writeRowInFile(diver, "Linear_diver", src.size(), cv::Size(kSize,kSize), errorL);
                     }
                 }
 
