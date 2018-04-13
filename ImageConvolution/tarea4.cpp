@@ -43,7 +43,6 @@ void printImages(cv::Mat& img1, cv::Mat& img2)
 double divergencia(cv::Mat& img1, cv::Mat& img2){
 
     double diver=0;
-    cv::Mat diffM;
     // Image mode
     if(imageMode)
         printImages(img1, img2);
@@ -55,19 +54,15 @@ double divergencia(cv::Mat& img1, cv::Mat& img2){
         img1 = img1/255; // Size of 1 byte in CV_8U
     }
          
-    cv::absdiff(img1, img2, diffM);
-    diffM = diffM / (img1.rows * img1.cols);
-
     double pixel = 0;
-    for(int i=0;i<diffM.rows; i++ ){
-      for(int j=0; j<diffM.cols; j++){
-            
-          pixel = diffM.at<double>(i,j);
-          diver+=pixel;
+    for(int i=0;i<img1.rows; i++ ){
+      for(int j=0; j<img1.cols; j++){
+          pixel = std::abs(img1.at<double>(i,j)-img2.at<double>(i,j));
+          diver+=pixel*pixel;
 
       }
     } 
-    return diver/(diffM.rows*diffM.cols);
+    return diver/(img1.rows*img1.cols);
 
 }
 // ########################################################################################
