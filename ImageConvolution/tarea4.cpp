@@ -4,12 +4,14 @@
 #include  "file_management.cpp"
 #include "space_filter.cpp"
 #include "frequency_filter.cpp"
+#include <iostream>
+
 // Define 10 runs for time averaging
-#define nRuns 5
+#define numberOfRuns 5
 
 
 // Define kernel sizes
-const std::vector<int> kernelSizes = {3,9,27,49,81,243,399,511,729,1023};
+const std::vector<int> defaultKernelSizes = {3,9,27,49,81,243,399,511,729,1023};
 //const std::vector<int> kernelSizes = {3,9,27,49,81};
 
 // Boost program options
@@ -22,22 +24,39 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
     copy(v.begin(), v.end(), std::ostream_iterator<T>(os, " "));
     return os;
 }
-
-
+// #############################
+// Printing Images for debugging
+// #############################
+void printImages(cv::Mat& img1, cv::Mat& img2)
+{
+    // Create a window for display.
+    cv::namedWindow( "Imagen1", cv::WINDOW_AUTOSIZE );
+    cv::namedWindow( "Imagen2", cv::WINDOW_AUTOSIZE );
+    // Show our image inside it.
+    cv::imshow( "Imagen1", img1);
+    cv::imshow( "Imagen2", img2);
+    // Close
+    cv::waitKey(0);
+}
 
 double divergencia(cv::Mat& img1, cv::Mat& img2){
 
     double diver=0;
     cv::Mat diffM;
-    cv::absdiff(img1, img2,diffM);
+    printImages(img1, img2);
 
-    for(int i=0;i<diffM.rows; i++ ){
+
+    std::cout << "1: "<< img1.depth() << std::endl;
+    std::cout << "2: "<< img2.depth() << std::endl;
+    cv::absdiff(img1, img2, diffM);
+
+    
+    /* for(int i=0;i<diffM.rows; i++ ){
       for(int j=0; i<diffM.cols; j++){
-
         double pixel= std::abs(img1.at<double>(i,j)-img2.at<double>(i,j));
         diver= diver+ pixel*pixel;
       }
-    }
+    } */
     return diver/(diffM.rows*diffM.cols);
 
 }
@@ -60,6 +79,7 @@ int main(int ac, char* av[]){
         po::options_description desc("Allowed options");
         desc.add_options()
             ("help,h", "produce help message")
+            ("mode,m", po::value<int>()->default_value(0), "produce Benchmark when m=0 or produce the Divergence when m=1")
             ("input-file,i", po::value< std::vector<std::string> >(), "input file Usage: ./tarea4 -i picture1 picture2 [...]")
         ;
 
@@ -74,9 +94,22 @@ int main(int ac, char* av[]){
         /*
             Help message
         */
-        if (vm.count("help")) {;
+        if (vm.count("help")) {
             std::cout << desc;
             return 0;
+        }
+
+        /*
+            Other params
+        */
+        int nRuns = numberOfRuns;
+        std::vector<int> kernelSizes = defaultKernelSizes;
+        int exeMode = vm["mode"].as<int>();
+        if(exeMode != 0)
+        {
+            // Divergence
+            nRuns = 1;
+            kernelSizes = {9};
         }
 
         /*
@@ -108,9 +141,9 @@ int main(int ac, char* av[]){
                 // Loading each image
                 // ------------------------------
                 // Read the file
-                src = cv::imread(path[i], CV_LOAD_IMAGE_COLOR);
+                src = cv::imread(path[i], CV_LOAD_IMAGE_GRAYSCALE);
                 std::cout << "Image: " << path[i] << " loaded..." << std::endl;
-                cvtColor(src, src, CV_BGR2GRAY);
+                //cvtColor(src, src, CV_BGR2GRAY);
                 dst = src.clone();
                 // Check for invalid input
                 if(! src.data )
@@ -141,7 +174,7 @@ int main(int ac, char* av[]){
                         ApplyGaussianFilter(src, dst, kSize, elapsedTime);
                         timeSum += elapsedTime;
                     }
-                    cv::Mat dstGS=dst;
+                    cv::Mat dstGS=dst.clone();
                     // Average
                     writeRowInFile(resultsGS, "Gauss_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
                     // ##################
@@ -156,7 +189,7 @@ int main(int ac, char* av[]){
                         ApplySeparableLinearFilter(src, dst, kernel, elapsedTime);
                         timeSum += elapsedTime;
                     }
-                    cv::Mat dstLS=dst;
+                    cv::Mat dstLS=dst.clone();
                     // Average
                     writeRowInFile(resultsSLS, "SepLinear_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
                     // ##################
@@ -174,7 +207,6 @@ int main(int ac, char* av[]){
                     // Average
                     writeRowInFile(resultsNSLS, "NonSepLinear_Space", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
 
-
                     // ##################
                     // Gaussian
                     // ##################
@@ -188,9 +220,13 @@ int main(int ac, char* av[]){
                         timeSum += elapsedTime;
                     }
                     // Average
+                    
                     writeRowInFile(resultsGF, "Gauss_Frequency", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
-                    //double errorG= divergencia(dstGS,dst);
-                    //writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    if(exeMode !=0 )
+                    {
+                        double errorG= divergencia(dstGS,dst);
+                        //writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    }
 
                     // ##################
                     // Linear
@@ -207,8 +243,11 @@ int main(int ac, char* av[]){
                     }
                     // Average
                     writeRowInFile(resultsLF, "Linear_Frequency", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
-                    //double errorL= divergencia(dstLS,dst);
-                    //writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    if(exeMode !=0 )
+                    {
+                        double errorL= divergencia(dstLS,dst);
+                        //writeRowInFile(diver, "Gauss_diver", src.size(), cv::Size(kSize,kSize), timeSum/nRuns);
+                    }
                 }
 
 

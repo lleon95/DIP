@@ -1,3 +1,3 @@
-/home/javier/TEC/Imagenes/git/ImageConvolution/CMakeFiles/edit_cache.dir
-/home/javier/TEC/Imagenes/git/ImageConvolution/CMakeFiles/rebuild_cache.dir
-/home/javier/TEC/Imagenes/git/ImageConvolution/CMakeFiles/tarea4.dir
+/home/lleon95/Git/DIP/ImageConvolution/CMakeFiles/edit_cache.dir
+/home/lleon95/Git/DIP/ImageConvolution/CMakeFiles/rebuild_cache.dir
+/home/lleon95/Git/DIP/ImageConvolution/CMakeFiles/tarea4.dir

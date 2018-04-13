@@ -1,4 +1,4 @@
-# Install script for directory: /home/javier/TEC/Imagenes/git/ImageConvolution
+# Install script for directory: /home/lleon95/Git/DIP/ImageConvolution
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/javier/TEC/Imagenes/git/ImageConvolution/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/lleon95/Git/DIP/ImageConvolution/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

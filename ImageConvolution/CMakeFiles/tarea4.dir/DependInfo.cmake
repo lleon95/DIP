@@ -4,14 +4,14 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/javier/TEC/Imagenes/git/ImageConvolution/tarea4.cpp" "/home/javier/TEC/Imagenes/git/ImageConvolution/CMakeFiles/tarea4.dir/tarea4.cpp.o"
+  "/home/lleon95/Git/DIP/ImageConvolution/tarea4.cpp" "/home/lleon95/Git/DIP/ImageConvolution/CMakeFiles/tarea4.dir/tarea4.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/usr/local/include/opencv"
-  "/usr/local/include"
+  "/home/lleon95/include/opencv"
+  "/home/lleon95/include"
   )
 
 # Targets to which this target links.
