@@ -66,7 +66,7 @@ namespace paid {
 
             // TODO: PUT YOUR CODE HERE!!!
             // Number of pixelsimg_size
-            double P_pixel = msk.rows*msk.cols*_bins*_bins; // CHECK THIS
+            double P_pixel = msk.rows*msk.cols*_bins*_bins*_bins; // CHECK THIS
             P_pixel = 1 / P_pixel;
             // Explore all pixels
             for(int row = 0; row < msk.rows; row++)
@@ -131,9 +131,11 @@ namespace paid {
         }
       } else {
         // File does not exist.  Simply stop for now
-        return true;
       }
+
     }
+    // Normalise 
+    
 
     return false;
   }
