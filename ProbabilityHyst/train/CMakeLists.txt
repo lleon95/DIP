@@ -6,6 +6,10 @@
 # Author: Pablo Alvarado
 # Date  : 24.03.2018
 
+set( OpenCV_FOUND 1 )
+cmake_minimum_required(VERSION 3.5)
+set( OpenCV_DIR "/usr/local/share/OpenCV" )
+
 find_package ( Boost COMPONENTS system filesystem program_options REQUIRED )
 include_directories (${CMAKE_SOURCE_DIR}/include ${Boost_INCLUDE_DIRS})
 

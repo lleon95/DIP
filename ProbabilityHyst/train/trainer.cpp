@@ -10,7 +10,7 @@
 
 #include <boost/filesystem.hpp>
 #include "trainer.hpp"
-
+#include <math.h>  
 #include <cstdint>
 
 namespace paid {
@@ -65,8 +65,66 @@ namespace paid {
           if (msk.data != 0) {
 
             // TODO: PUT YOUR CODE HERE!!!
+            // Number of pixelsimg_size
+            double P_pixel = msk.rows*msk.cols*_bins*_bins; // CHECK THIS
+            P_pixel = 1 / P_pixel;
+            // Explore all pixels
+            for(int row = 0; row < msk.rows; row++)
+            {
+              for(int col = 0; col < msk.cols; col++)
+              {
+                // Position: row, col
+                // - Get clasification
+                uchar classification = msk.at<uchar>(cv::Point(row,col)) ;
+                // - There are 3 colours 
+                for(int colour = 0; colour < 3; colour++)
+                {
+                  // Get colour
+                  uchar colour_val = img.at<cv::Vec3b>(cv::Point(row,col))[colour];
+                  // Put in a bin
+                  colour_val = floor(colour_val/_bins);
+                  // Classify
+                  if(classification > 192)
+                  {
+                    // It is an object
+                    switch(colour)
+                    {
+                      case 0: // Blue
+                        _objHist.at<float>(colour_val,0,0) += P_pixel;
+                        break;
+                      case 1: // Green
+                        _objHist.at<float>(0,colour_val,0) += P_pixel;
+                        break;
+                      case 2: // Red
+                        _objHist.at<float>(0,0,colour_val) += P_pixel;
+                        break;
+                      default:
+                        break;
+                    }
+                  }
+                  else if(classification < 64)
+                  {
+                    // It is not an object
+                    switch(colour)
+                    {
+                      case 0: // Blue
+                        _nonObjHist.at<float>(colour_val,0,0) += P_pixel;
+                        break;
+                      case 1: // Green
+                        _nonObjHist.at<float>(0,colour_val,0) += P_pixel;
+                        break;
+                      case 2: // Red
+                        _nonObjHist.at<float>(0,0,colour_val) += P_pixel;
+                        break;
+                      default:
+                        break;
+                    }
+                  }
+                }
+              }
+            }
               
-            std::cout << "done." << std::endl;
+            std::cout << "P: " << P_pixel << "done." << std::endl;
           } else {
             std::cerr << "failed.\n  Error: no mask found." << std::endl;
           }
