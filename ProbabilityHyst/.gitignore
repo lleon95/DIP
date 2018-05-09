@@ -8,3 +8,8 @@ train/CMakeLists.txt
 train/CMakeCache.txt
 train/cmake_install.cmake
 train/Makefile
+predict/CMakeFiles/*
+predict/CMakeLists.txt
+predict/CMakeCache.txt
+predict/cmake_install.cmake
+predict/Makefile
