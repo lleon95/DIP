@@ -9,6 +9,7 @@
  */
 
 #include "predictFrame.hpp"
+#include <math.h> 
 
 namespace paid {
 
@@ -46,12 +47,86 @@ namespace paid {
     // only reserve memory if necessary
     if ( (input.rows != prediction.rows) ||
          (input.cols != prediction.cols) ) {
-      prediction = cv::Mat_<float>(input.rows,input.cols,float());
+      prediction = cv::Mat_<float>(input.rows,input.cols, float());
     }
 
     assert(prediction.type() == CV_32F);
 
     // TODO: PUT YOUR CODE HERE
+
+    /*
+      Ecuaciones:
+        p(objeto | c) = [p(c | objeto) p(objeto)] / p(c) 
+        p(c) = p(c|objeto)p(objeto) + p(c|¬objeto)p(¬objeto)
+        Se parte con p(objeto) = 0.5
+      
+    */
+    float P_Color_NoObj;
+    float P_Color_Obj,P_Obj_Color;
+    float P_Color;
+    float P_Objeto = _apriori;
+    
+   
+    // Iterations
+    for(unsigned int iteration = 0; iteration < _iterations+1; iteration++)
+    {
+      // Get the pixel:
+      for(int row = 0; row < prediction.rows; row++)
+      {
+        for(int col = 0; col < prediction.cols; col++)
+        {
+          // Establish initial probabilities
+          if(iteration == 0)
+          {
+            prediction.at<float>(row, col) = _apriori;
+          }
+          // There are 3 colours in total
+          for(int pix_colour = 0; pix_colour < 3; pix_colour++)
+          {
+            // Get colour:
+            uchar colour_val = input.at<cv::Vec3b>(cv::Point(col,row))[pix_colour];
+            // Get the bin
+            colour_val = floor(colour_val/_bins);
+            // Get the probability of the pixel to be object
+            P_Objeto = prediction.at<float>(row, col);
+            // Get bin probability: These are the probabilities of a color given the result (Obj or Not Obj)
+            switch(pix_colour)
+            {
+              // Blue
+              case 0:
+                P_Color_NoObj = _nonObjHist.at<float>(colour_val,0,0);
+                P_Color_Obj = _objHist.at<float>(colour_val,0,0);
+                break;
+              // Green
+              case 1:
+                P_Color_NoObj = _nonObjHist.at<float>(0,colour_val,0);
+                P_Color_Obj = _objHist.at<float>(0,colour_val,0);
+                break;
+              // Red
+              case 2:
+                P_Color_NoObj = _nonObjHist.at<float>(0,0,colour_val);
+                P_Color_Obj = _objHist.at<float>(0,0,colour_val);
+                break;
+              // Error case
+              default:
+                P_Color_NoObj = 0;
+                P_Color_Obj = 0;
+                break;
+            } 
+            // Compute P_Color
+            P_Color = P_Color_Obj*P_Objeto+P_Color_NoObj*(1-P_Objeto);
+            // Compute the P_Obj_Color -> p(objeto | c) = [p(c | objeto) p(objeto)] / p(c) 
+            P_Obj_Color = (P_Color_Obj*P_Objeto)/P_Color;
+            // Compute P_Objeto = Sum(P(Color_i|Obj)*P(Color_i)),i=0,i=2) on the pixel
+            prediction.at<float>(row, col) += P_Obj_Color*P_Color;
+          }
+        }
+      }
+
+    }
+
+    std::cout << prediction.at<float>(prediction.rows/2, prediction.cols/2) << std::endl;
+
 
     return true;
   }
