@@ -118,6 +118,8 @@ namespace paid {
             // Compute the P_Obj_Color -> p(objeto | c) = [p(c | objeto) p(objeto)] / p(c) 
             P_Obj_Color = (P_Color_Obj*P_Objeto)/P_Color;
             // Compute P_Objeto = Sum(P(Color_i|Obj)*P(Color_i)),i=0,i=2) on the pixel
+
+            // De aquí en adelante se aplicaría el filtro gaussiano
             prediction.at<float>(row, col) += P_Obj_Color*P_Color;
           }
         }
