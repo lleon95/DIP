@@ -9,9 +9,11 @@
  */
 
 #include "predictFrame.hpp"
-#include <math.h> 
+#include <math.h>
 
 namespace paid {
+
+
 
   predictFrame::predictFrame(const int videv,
                              const std::string& histoName,
@@ -33,9 +35,12 @@ namespace paid {
     cv::Mat frame;
     _cap >> frame; // capture one frame just to force initialization
   }
-  
+
   predictFrame::~predictFrame() {
   }
+
+  // Gaussian filter to iterate the result
+
 
   bool predictFrame::predict(const cv::Mat& input,cv::Mat& prediction) const {
 
@@ -43,7 +48,7 @@ namespace paid {
     if (input.type() != CV_8UC3) {
       return false;
     }
-    
+
     // only reserve memory if necessary
     if ( (input.rows != prediction.rows) ||
          (input.cols != prediction.cols) ) {
@@ -56,17 +61,18 @@ namespace paid {
 
     /*
       Ecuaciones:
-        p(objeto | c) = [p(c | objeto) p(objeto)] / p(c) 
+        p(objeto | c) = [p(c | objeto) p(objeto)] / p(c)
         p(c) = p(c|objeto)p(objeto) + p(c|¬objeto)p(¬objeto)
         Se parte con p(objeto) = 0.5
-      
+
     */
-    float P_Color_NoObj;
+
+   float P_Color_NoObj;
     float P_Color_Obj,P_Obj_Color;
     float P_Color;
     float P_Objeto = _apriori;
-    
-   
+
+
     // Iterations
     for(unsigned int iteration = 0; iteration < _iterations+1; iteration++)
     {
@@ -79,6 +85,11 @@ namespace paid {
           if(iteration == 0)
           {
             prediction.at<float>(row, col) = _apriori;
+          }
+          else{
+            //se le aplica un filtro gausiano a la prediccion calculada en la iteración anterior
+            cv::Ptr<cv::FilterEngine> filter2D = cv::createGaussianFilter(prediction.type(), cv::Size(_gaussian,_gaussian), _sigma, _sigma);
+            filter2D->apply(prediction, prediction);
           }
           // There are 3 colours in total
           for(int pix_colour = 0; pix_colour < 3; pix_colour++)
@@ -112,22 +123,22 @@ namespace paid {
                 P_Color_NoObj = 0;
                 P_Color_Obj = 0;
                 break;
-            } 
+            }
             // Compute P_Color
             P_Color = P_Color_Obj*P_Objeto+P_Color_NoObj*(1-P_Objeto);
-            // Compute the P_Obj_Color -> p(objeto | c) = [p(c | objeto) p(objeto)] / p(c) 
+
+            // Compute the P_Obj_Color -> p(objeto | c) = [p(c | objeto) p(objeto)] / p(c)
             P_Obj_Color = (P_Color_Obj*P_Objeto)/P_Color;
             // Compute P_Objeto = Sum(P(Color_i|Obj)*P(Color_i)),i=0,i=2) on the pixel
-
-            // De aquí en adelante se aplicaría el filtro gaussiano
             prediction.at<float>(row, col) += P_Obj_Color*P_Color;
+
           }
         }
       }
 
     }
 
-    std::cout << prediction.at<float>(prediction.rows/2, prediction.cols/2) << std::endl;
+    //std::cout << prediction.at<float>(prediction.rows/2, prediction.cols/2) << std::endl;
 
 
     return true;
@@ -135,28 +146,28 @@ namespace paid {
 
   void predictFrame::computeLUT() {
     _l2i.assign(256,0);
-    
+
     for (size_t i=0;i<_l2i.size();++i) {
       _l2i[i] = static_cast<int>(float(i)*_bins/_l2i.size());
     }
   }
 
-    
+
   bool predictFrame::loop() {
     if (!_cap.isOpened()) {
       return false;
     }
 
     static const char* progress = "/-\\|";
-    
+
     cv::Mat frame,pred;
 
     size_t i=0;
-    
+
     for (;;) {
       _cap >> frame;
       cv::imshow("Input frame",frame);
-      
+
       int key = cv::waitKey(10);
       if (key > 0) {
         key = key & 0xFF;
@@ -166,7 +177,7 @@ namespace paid {
       }
 
       std::cout << "\r" << progress[i++ & 0x03] << std::flush;
-      
+
       predict(frame,pred);
       cv::imshow("Probability",pred);
     }
@@ -188,7 +199,7 @@ namespace paid {
     // Normalize histograms
     _objHist    /= cv::sum(_objHist)[0];
     _nonObjHist /= cv::sum(_nonObjHist)[0];
-    
+
     return true;
   }
 
