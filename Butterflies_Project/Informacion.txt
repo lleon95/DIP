@@ -1,0 +1,11 @@
+Haartraining:
+http://note.sonots.com/SciSoftware/haartraining.html
+
+TrainingCascade:
+https://docs.opencv.org/2.4.13.2/doc/user_guide/ug_traincascade.html
+
+Face and Eye detection: - Código a modificar (quitar elipse y poner rectángulo)
+https://docs.opencv.org/2.4/doc/tutorials/objdetect/cascade_classifier/cascade_classifier.html
+
+Car detection tutorial: - Tutorial de cómo se usa, completo
+https://www.youtube.com/watch?v=WEzm7L5zoZE
