@@ -13,24 +13,22 @@
  
  // Namespaces
  namespace po = boost::program_options;
- using namespace std;
- using namespace cv;
  
  /** Function Headers */
- void detectAndDisplay( Mat frame );
+ void detectAndDisplay( cv::Mat frame );
  
  /** Global variables */
- String cascade_name = "../training/data/cascade.xml";
- CascadeClassifier cascade;
- string window_name = "Butterfly detection";
+ cv::String cascade_name = "../training/data/cascade.xml";
+ cv::CascadeClassifier cascade;
+ std::string window_name = "Butterfly detection";
  
- RNG rng(12345);
+ cv::RNG rng(12345);
 
  // A helper function to simplify the main part.
  template<class T>
- ostream& operator<<(ostream& os, const vector<T>& v)
+ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
  {
-    copy(v.begin(), v.end(), ostream_iterator<T>(os, " "));
+    copy(v.begin(), v.end(), std::ostream_iterator<T>(os, " "));
     return os;
  }
  
@@ -41,73 +39,85 @@
  {
 
   try {
-    
-      /*
-          Getting the command parameters
-      */
-      po::options_description desc("Allowed options");
-      desc.add_options()
-          ("help", "produce help message")
-          ("input-file", po::value< vector<string> >(), "input file")
-      ;
 
-      po::positional_options_description p;
-      p.add("input-file", -1);
+        /*
+            Getting the command parameters
+        */
+        po::options_description desc("Allowed options");
+        desc.add_options()
+            ("help,h", "produce help message")
+            ("cascade,c", po::value<std::string>()->default_value(cascade_name), "It is the cascade.xml file")
+            ("input-file,i", po::value< std::vector<std::string> >(), "input file Usage: ./tarea4 -i picture1 picture2 [...]")
+        ;
 
-      po::variables_map vm;
-      po::store(po::command_line_parser(ac, av).
-                options(desc).positional(p).run(), vm);
-      po::notify(vm);
+        po::positional_options_description p;
+        p.add("input-file", -1);
 
-      /*
-          Help message
-      */
-      if (vm.count("help")) {
-          cout << "Usage: ./imageLoader picture1 picture2 [...]\n";
-          cout << desc;
-          return 0;
-      }
-      /*
-          Showing the images given by the parameters
-      */
-      if (vm.count("input-file"))
-      {
+        po::variables_map vm;
+        po::store(po::command_line_parser(ac, av).
+                    options(desc).positional(p).run(), vm);
+        po::notify(vm);
 
-          /*
-              Executing the image showing
-          */       
-          vector<string> path = vm["input-file"].as< vector<string> >();
+        /*
+            Help message
+        */
+        if (vm.count("help")) {
+            std::cout << "Usage: ./detector -c cascade.xml - i picture1 picture2 [...]\n";
+            std::cout << "       ./detector picture1 picture2 [...]\n";
+            std::cout << "       ./detector -i picture1 picture2 [...]\n";
+            std::cout << desc;
+            return 0;
+        }
 
-          //-- 1. Load the cascade
-          if( !cascade.load( cascade_name ) ){ printf("--(!)Error loading\n"); return -1; };
-          //-- 2. Load the pictures
-          for(int i = 0; i < path.size(); i++)
-          {
-              // Load each image
-              Mat image;
-              // Read the file
-              image = imread(path[i], CV_LOAD_IMAGE_COLOR);   
-              // Check for invalid input
-              if(! image.data )                              
-              {
-                  cout <<  "Could not open or find the image" << "\n" ;
-                  return -1;
-              } 
-              //-- 3. Apply detector
-              detectAndDisplay( image );               
-          }
-          waitKey(0);   // Wait for a keystroke in the window
-      }
-      else
-      {
-          cout << "Error: there aren't pictures to load" << "\n";
-      }
+        if(vm.count("input-file"))
+        {
+
+            // Load images
+            std::vector<std::string> path = vm["input-file"].as< std::vector<std::string> >();
+            // Load cascade
+            cascade_name = vm["cascade"].as<cv::String>();
+
+            //-- 1. Load the cascade
+            if( !cascade.load( cascade_name ) ){ printf("Error: error loading cascade file\n"); return -1; };
+            //-- 2. Load the pictures
+            if(0 < path.size())
+            {
+                // Load each one
+                for(int i = 0; i < path.size(); i++)
+                {
+                    // Load each image
+                    cv::Mat image;
+                    // Read the file
+                    image = cv::imread(path[i], CV_LOAD_IMAGE_COLOR);   
+                    // Check for invalid input
+                    if(! image.data )                              
+                    {
+                        std::cout <<  "Error: Could not open or find the image" << "\n" ;
+                        return -1;
+                    } 
+                    //-- 3. Apply detector
+                    detectAndDisplay( image );               
+                }
+
+            }
+            else
+            {
+                // Not images loaded
+                std::cout <<  "Error: Could not open or find the image" << "\n" ;
+            }
+        }
+        else
+        {
+            // Not images loaded
+            std::cout <<  "Error: No images were selected" << "\n" ;
+        }
+   
 
   }
   // Error Handling
   catch(std::exception& e)
   {
-      cout << e.what() << "\n";
+      std::cout << e.what() << "\n";
       return 1;
   }
   return 0;
@@ -117,51 +127,31 @@
  /**
   * @function detectAndDisplay
   */
- void detectAndDisplay( Mat frame )
+ void detectAndDisplay( cv::Mat frame )
  {
-    std::vector<Rect> faces;
-    Mat frame_gray;
+    cv::vector<cv::Rect> faces;
+    cv::Mat frame_gray;
     cvtColor( frame, frame_gray, CV_BGR2GRAY );
-    equalizeHist( frame_gray, frame_gray );
+    cv::equalizeHist( frame_gray, frame_gray );
  
     //-- Detect faces
-    cascade.detectMultiScale( frame_gray, faces, 1.1, 150, 0, Size(100, 100) );
+    cascade.detectMultiScale( frame_gray, faces, 1.1, 150, 0, cv::Size(100, 100) );
  
     for( int i = 0; i < faces.size(); i++ )
      {
-       Mat faceROI = frame_gray( faces[i] );
+       cv::Mat faceROI = frame_gray( faces[i] );
        //std::vector<Rect> eyes;
         
-       //-- Draw the face
-       void rectangle(Mat& img, Point pt1, Point pt2, const Scalar& color, int thickness=1, int lineType=8, int shift=0)
-       void ellipse(Mat& img, Point center, Size axes, double angle, double startAngle, double endAngle, const Scalar& color, int thickness=1, int lineType=8, int shift=0)¶
-
        // Compute vertexes
-       Point vertex1(faces[i].x, faces[i].y);
-       Point vertex2(faces[i].x + faces[i].width, faces[i].y + faces[i].height);
+       cv::Point vertex1(faces[i].x, faces[i].y);
+       cv::Point vertex2(faces[i].x + faces[i].width, faces[i].y + faces[i].height);
 
        // Draw rectangle
-       rectangle(frame, vertex1, vertex2, Scalar( 0, 0, 255 ), 2, 8, 0);
+       cv::rectangle(frame, vertex1, vertex2, cv::Scalar( 0, 0, 255 ), 2, 8, 0);
        
-       /* NOT NEEDED
-            //-- In each face, detect eyes
-            eyes_cascade.detectMultiScale( faceROI, eyes, 1.1, 2, 0 |CV_HAAR_SCALE_IMAGE, Size(30, 30) );
-            if( eyes.size() == 2)
-            {
-                //-- Draw the face
-                Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
-                ellipse( frame, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 0 ), 2, 8, 0 );
-        
-                for( int j = 0; j < eyes.size(); j++ )
-                { //-- Draw the eyes
-                    Point center( faces[i].x + eyes[j].x + eyes[j].width*0.5, faces[i].y + eyes[j].y + eyes[j].height*0.5 ); 
-                    int radius = cvRound( (eyes[j].width + eyes[j].height)*0.25 );
-                    circle( frame, center, radius, Scalar( 255, 0, 255 ), 3, 8, 0 );
-                }
-                }
-        */
      } 
     //-- Show what you got
-    imshow( window_name, frame );
+    cv::imshow( window_name , frame );
+    cv::waitKey(0);   // Wait for a keystroke in the window
  }
  
