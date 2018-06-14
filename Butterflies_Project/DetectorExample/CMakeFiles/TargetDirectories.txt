@@ -1,0 +1,3 @@
+/home/lleon95/Git/DIP/Butterflies_Project/DetectorExample/CMakeFiles/edit_cache.dir
+/home/lleon95/Git/DIP/Butterflies_Project/DetectorExample/CMakeFiles/rebuild_cache.dir
+/home/lleon95/Git/DIP/Butterflies_Project/DetectorExample/CMakeFiles/detector.dir

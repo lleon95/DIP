@@ -20,7 +20,7 @@
  void detectAndDisplay( Mat frame );
  
  /** Global variables */
- String cascade_name = "training/data/cascade.xml";
+ String cascade_name = "../training/data/cascade.xml";
  CascadeClassifier cascade;
  string window_name = "Butterfly detection";
  
@@ -121,12 +121,11 @@
  {
     std::vector<Rect> faces;
     Mat frame_gray;
- 
     cvtColor( frame, frame_gray, CV_BGR2GRAY );
     equalizeHist( frame_gray, frame_gray );
  
     //-- Detect faces
-    cascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0, Size(80, 80) );
+    cascade.detectMultiScale( frame_gray, faces, 1.1, 150, 0, Size(100, 100) );
  
     for( int i = 0; i < faces.size(); i++ )
      {
