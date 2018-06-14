@@ -133,8 +133,15 @@
        //std::vector<Rect> eyes;
         
        //-- Draw the face
-       Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
-       ellipse( frame, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 0 ), 2, 8, 0 );
+       void rectangle(Mat& img, Point pt1, Point pt2, const Scalar& color, int thickness=1, int lineType=8, int shift=0)
+       void ellipse(Mat& img, Point center, Size axes, double angle, double startAngle, double endAngle, const Scalar& color, int thickness=1, int lineType=8, int shift=0)¶
+
+       // Compute vertexes
+       Point vertex1(faces[i].x, faces[i].y);
+       Point vertex2(faces[i].x + faces[i].width, faces[i].y + faces[i].height);
+
+       // Draw rectangle
+       rectangle(frame, vertex1, vertex2, Scalar( 0, 0, 255 ), 2, 8, 0);
        
        /* NOT NEEDED
             //-- In each face, detect eyes
