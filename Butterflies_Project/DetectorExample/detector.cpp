@@ -21,6 +21,7 @@
  cv::String cascade_name = "../training/data/cascade.xml";
  cv::CascadeClassifier cascade;
  std::string window_name = "Butterfly detection";
+ int minNeighbors = 300;
  
  cv::RNG rng(12345);
 
@@ -47,6 +48,7 @@
         desc.add_options()
             ("help,h", "produce help message")
             ("cascade,c", po::value<std::string>()->default_value(cascade_name), "It is the cascade.xml file")
+            ("minNeighbors,n", po::value<int>()->default_value(minNeighbors), "It the minimum neighbors that should be detected")
             ("input-file,i", po::value< std::vector<std::string> >(), "input file Usage: ./tarea4 -i picture1 picture2 [...]")
         ;
 
@@ -76,6 +78,7 @@
             std::vector<std::string> path = vm["input-file"].as< std::vector<std::string> >();
             // Load cascade
             cascade_name = vm["cascade"].as<cv::String>();
+            minNeighbors = vm["minNeighbors"].as<int>();
 
             //-- 1. Load the cascade
             if( !cascade.load( cascade_name ) ){ printf("Error: error loading cascade file\n"); return -1; };
@@ -135,7 +138,8 @@
     cv::equalizeHist( frame_gray, frame_gray );
  
     //-- Detect faces
-    cascade.detectMultiScale( frame_gray, faces, 1.1, 150, 0, cv::Size(100, 100) );
+    // Sensitivity
+    cascade.detectMultiScale( frame_gray, faces, 1.1, minNeighbors, 0, cv::Size(100, 100) );
  
     for( int i = 0; i < faces.size(); i++ )
      {
