@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/lleon95/Git/DIP/Butterflies_Project/DetectorExample
+CMAKE_SOURCE_DIR = /home/javier/TEC/Imagenes/DIP/Butterflies_Project/DetectorExample
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/lleon95/Git/DIP/Butterflies_Project/DetectorExample
+CMAKE_BINARY_DIR = /home/javier/TEC/Imagenes/DIP/Butterflies_Project/DetectorExample
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/lleon95/Git/DIP/Butterflies_Project/DetectorExample/CMakeFiles /home/lleon95/Git/DIP/Butterflies_Project/DetectorExample/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/javier/TEC/Imagenes/DIP/Butterflies_Project/DetectorExample/CMakeFiles /home/javier/TEC/Imagenes/DIP/Butterflies_Project/DetectorExample/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/lleon95/Git/DIP/Butterflies_Project/DetectorExample/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/javier/TEC/Imagenes/DIP/Butterflies_Project/DetectorExample/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -124,19 +124,19 @@ detector/fast:
 .PHONY : detector/fast
 
 # target to build an object file
-detector.o:
-	$(MAKE) -f CMakeFiles/detector.dir/build.make CMakeFiles/detector.dir/detector.o
-.PHONY : detector.o
+main.o:
+	$(MAKE) -f CMakeFiles/detector.dir/build.make CMakeFiles/detector.dir/main.o
+.PHONY : main.o
 
 # target to preprocess a source file
-detector.i:
-	$(MAKE) -f CMakeFiles/detector.dir/build.make CMakeFiles/detector.dir/detector.i
-.PHONY : detector.i
+main.i:
+	$(MAKE) -f CMakeFiles/detector.dir/build.make CMakeFiles/detector.dir/main.i
+.PHONY : main.i
 
 # target to generate assembly for a file
-detector.s:
-	$(MAKE) -f CMakeFiles/detector.dir/build.make CMakeFiles/detector.dir/detector.s
-.PHONY : detector.s
+main.s:
+	$(MAKE) -f CMakeFiles/detector.dir/build.make CMakeFiles/detector.dir/main.s
+.PHONY : main.s
 
 # Help Target
 help:
@@ -147,9 +147,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... detector"
-	@echo "... detector.o"
-	@echo "... detector.i"
-	@echo "... detector.s"
+	@echo "... main.o"
+	@echo "... main.i"
+	@echo "... main.s"
 .PHONY : help
 
 
